@@ -1,0 +1,1178 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : COL_SAVClient
+ major_version : 28
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x1876563d02515e39
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  type_code : 31
+  p_codes :
+   -
+     code : |1+
+      CONSTANT
+      	// Etats d'un ticket d'incident
+      	ETAT_TICKET_ENCOURS = 1		// Le ticket est en cours de traitement
+      	ETAT_TICKET_DEMANDE = 2		// La personne en charge du ticket a besoin d'information supplémentaire
+      	ETAT_TICKET_RESOLU  = 3		// Le contenu du ticket a été résolu mais pas encore contrôlé
+      	ETAT_TICKET_FERME   = 4		// Le contenu du ticket a été rejeté mais pas encore contrôlé
+      	ETAT_TICKET_CLOTURE = 5		// Le ticket a été résolu ou rejeté et contrôlé
+      	
+      	// Constante des noms de droits
+      	DROIT_PRJ_RESPONSABLE = "PRJ_RESPONSABLE"
+      	
+      	// Constantes de rôles sur les projets et les tickets
+      	ROLE_PRJ_RESPONSABLE = 1			// Responsable de projet (peut créer, modifier et détruire des projets)
+      	ROLE_PRJ_INTERVENANT = 2			// Intervenant (peut proposer des correctifs sur des tickets)
+      	ROLE_PRJ_INVITE = 3					// Invité (état en attendant que l'invité accepte ou refuse)
+      	
+      	// Constantes des rôles sur les tickets
+      	ROLE_TICKET_CREATEUR = 1			// Créateur du ticket
+      	ROLE_TICKET_AFFECTE = 2				// Personne à qui le ticket est actuellement affecté
+      	ROLE_TICKET_ABONNE_CLOTURE = 4		// Personne qui a demandé une notification à la clôture du ticket
+      	ROLE_TICKET_ABONNE_MODIF = 8		// Personne qui a demandé une notification de chaque modification du ticket
+      	
+      	// Erreurs sur une invitation
+      	ERR_INVIT_OK = 0
+      	ERR_INVIT_EXPIREE = 1
+      	ERR_INVIT_INVALIDE = 2
+      	
+      	// Niveaux de gravité d'un ticket
+      	GRAVITE_MINEUR = 1
+      	GRAVITE_NORMAL = 2
+      	GRAVITE_FATAL = 3
+      		
+      	// Libellés
+      	LIB_PAS_DE_PARENT = "<pas de projet parent>"
+      	
+      	// Constantes des noms de paramètres de pages
+      	PAGEPARAM_TOKEN_INVITATION = "invit"		// Paramètre de la page invitation transmis par email
+      	PAGEPARAM_EMAIL_INVITATION = "email"		// Paramètre de la page invitation transmis par email
+      	PAGEPARAM_PROJET = "idprj"					// Identifiant d'un projet
+      	PAGEPARAM_FILTRE_MOT = "filter"				// Filtrage des tickets par mot clé
+      	PAGEPARAM_FILTRE_ETAT = "status"			// Filtrage des tickets par état
+      	PAGEPARAM_FILTRE_GRAVITE = "level"			// Filtrage des tickets par niveau de gravité
+      	PAGEPARAM_FILTRE_INTER = "usesr"			// Filtrage des tickets par affectation
+      	PAGEPARAM_URLFROM = "urlfrom"				// URL de retour
+      	PAGEPARAM_TICKET = "idticket"				// Identifiant d'un ticket
+      	PAGEPARAM_ATTACH = "idattach"				// Identifiant de pièce jointe
+      	
+      FIN
+      
+      // Description d'un projet
+      STProjet est une Structure
+      	nIDProjet est un entier sur 8 <MAPPING=IDProjet>
+      	sNomProjet est une chaîne <MAPPING=NomProjet>
+      	sDescription est une chaîne <MAPPING=description>
+      	nIDProjetParent est un entier sur 8 <MAPPING=IDProjetParent>
+      	sVersion est une chaîne <MAPPING=Version>
+      	tabUtilisateur est un tableau de STUtilisateursLié
+      	
+      	nNbTicket est un entier
+      	nNbTicketOuvert est un entier
+      	dhDerniereAction est une DateHeure
+      FIN
+      
+      // Liaison d'utilisateurs à un ticket ou un projet
+      STUtilisateursLié est une Structure
+      	nIDCompteUtilisateur est un entier sur 8 <MAPPING=IDCompteUtilisateur>
+      	nRole est un entier <MAPPING=Role>
+      FIN
+      
+      // Description d'un ticket
+      STTicket est une Structure
+      	nIDTicket est un entier sur 8 <MAPPING=IDTicket>
+      	nIDProjet est un entier sur 8 <MAPPING=IDProjet>
+      	nIDCreateur est un entier sur 8 <MAPPING=IDCreateur>
+      	sRésumé est une chaîne <MAPPING=Résumé>
+      	dhDateCréation est un DateHeure <MAPPING=DateCréation>
+      	sRéférenceExterne est une chaîne <MAPPING=RéférenceExterne>
+      	nIDAffectation est un entier sur 8 <MAPPING=IDAffectation>
+      	bOuvert est un booléen <MAPPING=Ouvert>
+      	nGravite est un entier <MAPPING=Gravite>
+      	nEtat est un entier <MAPPING=EtatTicket>
+      	
+      	tabUtilisateur est un tableau de STUtilisateursLié
+      	tabIntervention est un tableau de STIntervention
+      	
+      	// Variables de détail
+      	sEtat est une chaîne
+      	sNomAffichageAffectation est une chaîne
+      	sGravite est une chaîne
+      	dhDerniereIntervention est un DateHeure
+      	sNomProjet est une chaîne
+      FIN
+      
+      STIntervention est une Structure
+      	nIDIntervention est un entier sur 8 <MAPPING=IDIntervention>
+      	nIDIntervenant est un entier sur 8 <MAPPING=IDIntervenant>
+      	sDétail est une chaîne <MAPPING=Détail>
+      	dhDateIntervention est un DateHeure <MAPPING=DateIntervention>
+      	nEtat est un entier <MAPPING=EtatTicket>
+      	nGravité est un entier <MAPPING=Gravité>
+      	nIDTicket est un entier sur 8 <MAPPING=IDTicket>
+      	tabPieceJointe est un tableau de STPieceJointe
+      	
+      	// Variables de détail
+      	sNomAffichageIntervention est une chaîne
+      	sDescriptionChangeEtat est une chaîne
+      	sDescriptionChangeGravité est une chaîne
+      FIN
+      
+      // Pièce jointe à un ticket
+      STPieceJointe est une Structure
+      	nIDPieceJointe est un entier sur 8 <MAPPING=IDPieceJointe>
+      	sNomFichier est une chaîne <MAPPING=description>
+      	bufContenu est un Buffer <MAPPING=Contenu>
+      	sTypeMIME est une chaîne <MAPPING=TypeMIME>    
+      	nIDIntervention est un entier sur 8 <MAPPING=IDIntervention>   
+      
+      	// Variables de détail
+      	nIDTicket est un entier sur 8
+      	nTailleFichier est un entier sur 8
+      FIN
+      
+      STInfoInvitation est une Structure
+      	sNomProjet est une chaîne
+      	dDateLimite est une Date
+      	sEmailResponsable est une chaîne
+      	nErreur est un entier
+      FIN
+      
+      gsPageCreationCompteSurInvitation est une chaîne	// nom de la page pour créer un compte sur invitation
+     type : 720896
+  procedures :
+   -
+     name : PROJET_Crée
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1762691124194074169
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] PROJET_Crée (<stPrj> est STProjet)
+      //
+      // Paramètres :
+      //	stPrj (STProjet) :<indiquez ici le rôle de stProjet>
+      // Valeur de retour :
+      // 	entier : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      PROCÉDURE PROJET_Crée( stPrj est un STProjet ) : entier
+      
+      HTransactionDébut()
+      
+      HRAZ(Projet)
+      MémoireVersFichier(stPrj,Projet)
+      HAjoute(Projet)
+      
+      // Ajoute les utilisateurs
+      POUR TOUT stUtilisateur DE stPrj.tabUtilisateur
+      	HRAZ(CompteUtilisateur_Projet)
+      	MémoireVersFichier(stUtilisateur,CompteUtilisateur_Projet)
+      	CompteUtilisateur_Projet.IDProjet = Projet.IDProjet
+      	CompteUtilisateur_Projet.TokenInvit = DonneGUID(guidBrut)
+      	HAjoute(CompteUtilisateur_Projet)
+      FIN
+      
+      HTransactionFin()
+      
+      RENVOYER Projet.IDProjet
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	HTransactionAnnule()
+      	RENVOYER 0
+      	
+     type : 458752
+   -
+     name : PROJET_Liste
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1762691124194139705
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] PROJET_Liste ( [<nIDUtilisateur> est entier sur 8 octets [, <nRole> est entier [, <bChargeDetail> est booléen]]])
+      //
+      // Paramètres :
+      //	nIDUtilisateur (entier sur 8 octets - valeur par défaut=-1) :<indiquez ici le rôle de nIDUtilisateur>
+      //	nRole (entier - valeur par défaut=-1) :<indiquez ici le rôle de nRole>
+      //	bChargeDetail (booléen - valeur par défaut=1) :<indiquez ici le rôle de bChargeDescription>
+      // Valeur de retour :
+      // 	tableau : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE PROJET_Liste( nIDUtilisateur est un entier sur 8 = -1, nRole est un entier = -1, bChargeDetail est un booléen = Vrai )
+      
+      tabProjet est un tableau de STProjet
+      stPrj est un STProjet
+      
+      SI nIDUtilisateur=-1 ALORS
+      	POUR TOUT Projet
+      		SI bChargeDetail ALORS
+      			FichierVersMémoire(stPrj,Projet)
+      		SINON
+      			stPrj.nIDProjet = Projet.IDProjet
+      		FIN		
+      		Ajoute(tabProjet,stPrj)
+      	FIN
+      SINON
+      	POUR TOUT CompteUtilisateur_Projet AVEC IDCompteUtilisateur = nIDUtilisateur
+      		SI nRole=-1 _OU_ ETBinaire(CompteUtilisateur_Projet.Role,nRole)>0 ALORS
+      			stPrj = PROJET_Lit(CompteUtilisateur_Projet.IDProjet,bChargeDetail)
+      			Ajoute(tabProjet,stPrj)
+      		FIN
+      	FIN
+      FIN
+      
+      CAS ERREUR:
+      	SupprimeTout(tabProjet)
+      	ErreurPropage()
+      	
+      FIN:
+      RENVOYER tabProjet
+     type : 458752
+   -
+     name : PROJET_Lit
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1762691124194205241
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] PROJET_Lit (<nIDProjet> est entier sur 8 octets, <bChargeDetail> est booléen)
+      //
+      // Paramètres :
+      //	nIDProjet (entier sur 8 octets) : <indiquez ici le rôle de nIDProjet>
+      //	bChargeDetail (booléen) : <indiquez ici le rôle de bChargeDetail>
+      // Valeur de retour :
+      // 	STProjet : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE PROJET_Lit( LOCAL nIDProjet est un entier sur 8, LOCAL bChargeDetail est un booléen )
+      
+      stPrj est un STProjet
+      stUtilisateur est un STUtilisateursLié
+      
+      SI HLitRecherchePremier(Projet,IDProjet,nIDProjet) ALORS
+      	FichierVersMémoire(stPrj,Projet)
+      	SI bChargeDetail ALORS
+      		// Utilisateurs associés
+      		POUR TOUT CompteUtilisateur_Projet AVEC IDProjet = nIDProjet
+      			FichierVersMémoire(stUtilisateur,CompteUtilisateur_Projet)
+      			Ajoute(stPrj.tabUtilisateur,stUtilisateur)
+      		FIN	
+      		// Stats des tickets
+      		SI HExécuteRequête(REQ_CompteTicket,hRequêteDéfaut,nIDProjet,Null) ALORS
+      			stPrj.nNbTicket = REQ_CompteTicket.NbTicket
+      			HAnnuleDéclaration(REQ_CompteTicket)
+      		FIN
+      		SI HExécuteRequête(REQ_CompteTicket,hRequêteDéfaut,nIDProjet,Vrai) ALORS
+      			stPrj.nNbTicketOuvert = REQ_CompteTicket.NbTicket
+      			HAnnuleDéclaration(REQ_CompteTicket)
+      		FIN
+      		SI HExécuteRequête(REQ_DateDernièreInterProjet,hRequêteDéfaut,nIDProjet) ALORS
+      			stPrj.dhDerniereAction = REQ_DateDernièreInterProjet.DateIntervention
+      			HAnnuleDéclaration(REQ_DateDernièreInterProjet)
+      		FIN
+      	FIN
+      SINON
+      	ErreurDéclenche(1,"Projet inexistant")
+      FIN
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	
+      FIN:
+      RENVOYER stPrj
+     type : 458752
+   -
+     name : PROJET_Modifie
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1762691124194336313
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //PROJET_Modifie (<stPrj> est STProjet)
+      //
+      // Paramètres :
+      //	stPrj (STProjet) :<indiquez ici le rôle de stProjet>
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE PROJET_Modifie( stPrj est un STProjet )
+      
+      SI HLitRecherchePremier(Projet,IDProjet,stPrj.nIDProjet,hBlocageEcriture) ALORS
+      	MémoireVersFichier(stPrj,Projet)
+      	HModifie(Projet)
+      FIN
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      
+      	
+     type : 458752
+   -
+     name : IDRoleVersChaine
+     procedure_id : 1762691124194467385
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] IDRoleVersChaine (<nRole> est entier)
+      //
+      // Paramètres :
+      //	nRole (entier) :<indiquez ici le rôle de nRole>
+      // Valeur de retour :
+      // 	chaîne UNICODE : // 	Aucune
+      //
+      //	nRole (entier) :<indiquez ici le rôle de nRole>
+      PROCÉDURE IDRoleVersChaine(LOCAL nRole est un entier)
+      
+      SELON nRole
+      	// Constantes de rôles sur les projets et les tickets
+      	CAS ROLE_PRJ_RESPONSABLE
+      		RENVOYER "Responsable de projet"
+      	CAS ROLE_PRJ_INTERVENANT
+      		RENVOYER "Intervenant"
+      FIN
+      
+      ErreurDéclenche(1,"Rôle inconnu")
+      RENVOYER ""
+     type : 458752
+   -
+     name : PROJET_AjouteUtilisateur
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1762691124194532921
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //PROJET_AjouteUtilisateur (<nIDProjet> est entier sur 8 octets, <sEmail> est chaîne, <nRole> est entier)
+      //
+      // Paramètres :
+      //	nIDProjet (entier sur 8 octets) :<indiquez ici le rôle de nIDProjet>
+      //	sEmail (chaîne UNICODE) :<indiquez ici le rôle de sEmail>
+      //	nRole (entier) :<indiquez ici le rôle de nRole>
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE PROJET_AjouteUtilisateur( nIDProjet est un entier sur 8, sEmail est une chaîne, nRole est un entier )
+      
+      stPrj est un STProjet = PROJET_Lit(nIDProjet,Faux)
+      
+      sTokenInvit est une chaîne = DonneGUID(guidBrut)
+      
+      // Si l'utilisateur existe déjà dans la base, on récupère son ID
+      // sinon, on crée le compte (inactif) et on envoie un email d'invitation
+      nIDUtilisateur est un entier sur 8
+      SI bUtilisateurDisponible(sEmail)=Faux ALORS
+      	nIDUtilisateur = nEmailVersIDUtilisateur(sEmail)
+      SINON
+      	clUtilisateur est un CUtilisateur
+      	AVEC clUtilisateur
+      		.m_bCompteActif = Faux
+      		.m_sEmail = sEmail
+      		.m_sDescription = ""
+      		.m_sNomAffichage = sEmail
+      	FIN
+      	clUtilisateur.Enregistre()
+      	nIDUtilisateur = clUtilisateur.m_nIDCompteUtilisateur
+      	
+      	EnvoieEmailInvitation(stPrj.sNomProjet,sEmail,sTokenInvit)
+      FIN
+      
+      // Associe l'utilisateur au projet
+      HRAZ(CompteUtilisateur_Projet)
+      CompteUtilisateur_Projet.IDCompteUtilisateur = nIDUtilisateur
+      CompteUtilisateur_Projet.IDProjet = nIDProjet
+      CompteUtilisateur_Projet.Role = nRole
+      CompteUtilisateur_Projet.TokenInvit = sTokenInvit
+      HAjoute(CompteUtilisateur_Projet)
+      
+      
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	
+     type : 458752
+   -
+     name : EnvoieEmailInvitation
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1762691124194598457
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //EnvoieEmailInvitation (<sNomProjet> est chaîne, <sEmail> est chaîne, <sTokenInvitation> est chaîne)
+      //
+      // Paramètres :
+      //	sNomProjet (chaîne ANSI) : <indiquez ici le rôle de sEmail>
+      //	sEmail (chaîne ANSI) : <indiquez ici le rôle de sEmail>
+      //	sTokenInvitation (chaîne ANSI) : <indiquez ici le rôle de sTokenInvitation>
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      //	nRole (entier) :<indiquez ici le rôle de nRole>
+      PROCÉDURE EnvoieEmailInvitation( sNomProjet est une chaîne, sEmail est une chaîne, sTokenInvitation est une chaîne )
+      
+      taParam est un tableau associatif de chaînes
+      taParam[pagePARAM_TOKEN_INVITATION]	= sTokenInvitation
+      taParam[pagePARAM_EMAIL_INVITATION]	= sEmail
+      
+      // Construction du mail
+      cMel est un Email
+      AVEC cMel
+      	.Expediteur = LitParamètreSite(PARAM_EMAIL_EXPEDITEUR)
+      	.Sujet = ChaîneConstruit("Vous êtes invités à participer au projet %1",sNomProjet)
+      	.Message = ChaîneConstruit([
+      	Bonjour,
+      	
+      	Vous êtes invité à participer au projet %1.
+      	Pour activer votre compte, cliquez sur le lien suivant ou recopiez-le dans votre navigateur afin d'activer votre compte d'utilisateur.
+      	%2
+      	],sNomProjet,ConstruitURL(pageadresse(gsPageCreationCompteSurInvitation),taParam,faux))
+      FIN
+      Ajoute(cMel.Destinataire,sEmail)
+      
+      EnvoiEmail(cMel)
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	
+     type : 458752
+   -
+     name : InitialiseSAVClient
+     procedure_id : 1762691270225814062
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] InitialiseSAVClient ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	booléen : <indiquez ici le rôle de la valeur de retour>
+      //
+      //	cxHFSQLMetier : <indiquez ici le rôle de CxBase>
+      PROCÉDURE InitialiseSAVClient()
+      
+      // Changement de connexion pour les fichiers de données du composant
+      // Connexion à la base de données
+      SI LitParamètreSite(PARAM_BDD_MODE,"1")="2" ALORS
+      	// Paramètres de la connexion
+      	CxBase est une Connexion
+      	CxBase..Provider = hAccèsHFClientServeur
+      	CxBase..Utilisateur = LitParamètreSite(PARAM_BDD_UTILISATEUR)
+      	CxBase..MotDePasse = Décrypte(LitParamètreSite(PARAM_BDD_MOT_DE_PASSE),"",compresseAucun + crypteAucun, encodeBASE64)
+      	CxBase..Serveur = LitParamètreSite(PARAM_BDD_SERVEUR)+":"+LitParamètreSite(PARAM_BDD_PORT)
+      	CxBase..BaseDeDonnées = LitParamètreSite(PARAM_BDD_BASE)
+      	CxBase..Cryptage = hCryptageRC5_16
+      	
+      	HChangeConnexion("*",CxBase)
+      	SI HOuvreConnexion(CxBase)=Faux ALORS
+      		Erreur("Connexion au serveur HFSQL impossible, l'erreur renvoyée est :"+ErreurInfo())
+      	FIN
+      	// Crée les fichiers s'ils n'existent pas
+      	HCréationSiInexistant("*")
+      FIN
+     type : 458752
+   -
+     name : PROJET_Supprime
+     procedure_id : 1785301610128915423
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //PROJET_Supprime (<nIDProjet> est entier sur 8 octets)
+      //
+      // Paramètres :
+      //	nIDProjet (entier sur 8 octets) : <indiquez ici le rôle de nIDProjet>
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE PROJET_Supprime( nIDProjet est un entier sur 8 octets )
+      
+      SI HLitRecherchePremier(Projet,IDProjet,nIDProjet) ALORS
+      	HSupprime(Projet)
+      FIN
+     type : 458752
+   -
+     name : PROJET_IDResponsable
+     procedure_id : 1785315139313978308
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] PROJET_IDResponsable (<stProjet> est STProjet)
+      //
+      // Paramètres :
+      //	stProjet (STProjet) : <indiquez ici le rôle de stProjet>
+      // Valeur de retour :
+      // 	Type indéterminé : // 	Aucune
+      //
+      PROCÉDURE PROJET_IDResponsable( LOCAL stProjet est un STProjet )
+      
+      SI HLitRecherchePremier(CompteUtilisateur_Projet,IDProjetRole,[stProjet.nIDProjet,ROLE_PRJ_RESPONSABLE]) ALORS
+      	RENVOYER CompteUtilisateur_Projet.IDCompteUtilisateur
+      FIN
+      
+      RENVOYER 0
+     type : 458752
+   -
+     name : PROJET_EmailResponsable
+     procedure_id : 1785610151995369548
+     type_code : 15
+     code : |1+
+      PROCÉDURE PROJET_EmailResponsable( LOCAL stProjet est un STProjet )
+      
+      SI HLitRecherchePremier(CompteUtilisateur_Projet,IDProjetRole,[stProjet.nIDProjet,ROLE_PRJ_RESPONSABLE]) ALORS
+      	clUsr est un CUtilisateur
+      	SI clUsr.bChargeInfo(CompteUtilisateur_Projet.IDCompteUtilisateur) ALORS
+      		RENVOYER clUsr.m_sEmail
+      	FIN
+      FIN
+      
+      RENVOYER ""
+      
+     type : 458752
+   -
+     name : PROJET_SupprimeUtilisateur
+     procedure_id : 1785615872895237143
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //PROJET_SupprimeUtilisateur (<nIDProjet> est entier sur 8 octets, <sEmailSuppr> est chaîne)
+      //
+      // Paramètres :
+      //	nIDProjet (entier sur 8 octets) : <indiquez ici le rôle de nIDProjet>
+      //	sEmailSuppr (chaîne ANSI) : <indiquez ici le rôle de sEmailSuppr>
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE PROJET_SupprimeUtilisateur( LOCAL nIDProjet est un entier sur 8, LOCAL sEmailSuppr est une chaîne )
+      
+      nIDUtilisateur est un entier sur 8 = nEmailVersIDUtilisateur(sEmailSuppr)
+      SI nIDUtilisateur>0 ALORS
+      	SI HLitRecherchePremier(CompteUtilisateur_Projet,IDCompteUtilisateur_IDProjet,[nIDUtilisateur,nIDProjet]) ALORS
+      		HSupprime(CompteUtilisateur_Projet)		
+      	FIN
+      FIN
+      
+     type : 458752
+   -
+     name : PROJET_EstIntervenant
+     procedure_id : 1785628272556197787
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] PROJET_EstIntervenant (<nIDProjet> est entier sur 8 octets, <nIDUsr> est entier sur 8 octets)
+      //
+      // Paramètres :
+      //	nIDProjet (entier sur 8 octets) : <indiquez ici le rôle de nIDProjet>
+      //	nIDUsr (entier sur 8 octets) : <indiquez ici le rôle de nIDUsr>
+      // Valeur de retour :
+      // 	booléen : // 	Aucune
+      //
+      PROCÉDURE PROJET_EstIntervenant( LOCAL nIDProjet est un entier sur 8, LOCAL nIDUsr est un entier sur 8 )
+      
+      SI HLitRecherchePremier(CompteUtilisateur_Projet,IDCompteUtilisateur_IDProjet,[nIDUsr,nIDProjet]) ALORS
+      	RENVOYER Vrai
+      FIN
+      
+      RENVOYER Faux
+     type : 458752
+   -
+     name : PROJET_RechercheInvitation
+     procedure_id : 1785635045748070901
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] PROJET_RechercheInvitation (<sTokenInvit> est chaîne, <sEmail> est chaîne)
+      //
+      // Paramètres :
+      //	sTokenInvit (chaîne ANSI) : <indiquez ici le rôle de sTokenInvit>
+      //	sEmail (chaîne ANSI) : <indiquez ici le rôle de sEmail>
+      // Valeur de retour :
+      // 	STInfoInvitation : // 	Aucune
+      //
+      PROCÉDURE PROJET_RechercheInvitation( LOCAL sTokenInvit est une chaîne, LOCAL sEmail est une chaîne ) : STInfoInvitation
+      
+      stInfo est un STInfoInvitation
+      stInfo.nErreur = ERR_INVIT_INVALIDE
+      
+      // Retrouve le token
+      SI HLitRecherchePremier(CompteUtilisateur_Projet,TokenInvit,sTokenInvit) ALORS
+      	// Date limite de l'invitation
+      	SI CompteUtilisateur_Projet.ExpirationInvitation<>"" ALORS
+      		stInfo.dDateLimite = CompteUtilisateur_Projet.ExpirationInvitation
+      		SI stInfo.dDateLimite<DateSys() ALORS
+      			// Invitation expirée
+      			stInfo.nErreur = ERR_INVIT_EXPIREE
+      			RENVOYER stInfo
+      		FIN
+      	FIN
+      	
+      	// Vérifier l'email associé
+      	clInvité est un CUtilisateur
+      	SI clInvité.bChargeInfo(CompteUtilisateur_Projet.IDCompteUtilisateur) ALORS
+      		SI clInvité.m_sEmail<>sEmail ALORS
+      			// Invitation invalide
+      			RENVOYER stInfo
+      		FIN
+      	FIN
+      	
+      	// Déduit le projet
+      	SI HLitRecherchePremier(Projet,IDProjet,CompteUtilisateur_Projet.IDProjet) ALORS
+      		stInfo.sNomProjet = Projet.NomProjet
+      	FIN
+      	
+      	// Déduit le responsable
+      	SI HLitRecherchePremier(CompteUtilisateur_Projet,IDProjetRole,[Projet.IDProjet,ROLE_PRJ_RESPONSABLE]) ALORS
+      		clResp est un CUtilisateur
+      		SI clResp.bChargeInfo(CompteUtilisateur_Projet.IDCompteUtilisateur) ALORS
+      			stInfo.sEmailResponsable = clResp.m_sEmail
+      			stInfo.nErreur = ERR_INVIT_OK
+      		FIN
+      	FIN
+      FIN
+      
+      RENVOYER stInfo
+      
+      
+     type : 458752
+   -
+     name : PROJET_RefusInvitation
+     procedure_id : 1785658401783436153
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //PROJET_RefusInvitation (<sTokenInvit> est chaîne, <sEmailInvit> est chaîne)
+      //
+      // Paramètres :
+      //	sTokenInvit (chaîne ANSI) : <indiquez ici le rôle de sTokenInvit>
+      //	sEmailInvit (chaîne ANSI) : <indiquez ici le rôle de sEmailInvit>
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE PROJET_RefusInvitation( LOCAL sTokenInvit est une chaîne, LOCAL sEmailInvit est une chaîne )
+      
+      // Retrouve le token
+      SI HLitRecherchePremier(CompteUtilisateur_Projet,TokenInvit,sTokenInvit) ALORS
+      	nEnr est un entier sur 8 = HNumEnr(CompteUtilisateur_Projet)
+      	// Vérifier l'email associé
+      	clInvité est un CUtilisateur
+      	SI clInvité.bChargeInfo(CompteUtilisateur_Projet.IDCompteUtilisateur) ALORS
+      		SI clInvité.m_sEmail<>sEmailInvit ALORS
+      			// Invitation invalide
+      			RETOUR
+      		FIN
+      	FIN
+      	
+      	// Déduit le projet
+      	SI HLitRecherchePremier(Projet,IDProjet,CompteUtilisateur_Projet.IDProjet) ALORS
+      		// Déduit le responsable
+      		SI HLitRecherchePremier(CompteUtilisateur_Projet,IDProjetRole,[Projet.IDProjet,ROLE_PRJ_RESPONSABLE]) ALORS
+      			clResp est un CUtilisateur
+      			SI clResp.bChargeInfo(CompteUtilisateur_Projet.IDCompteUtilisateur) ALORS
+      				// Notifie l'invitant
+      				cMel est un Email
+      				AVEC cMel
+      					.Expediteur = LitParamètreSite(PARAM_EMAIL_EXPEDITEUR)
+      					.Sujet = ChaîneConstruit("Refus d'une invitation au projet %1",Projet.NomProjet)
+      					.Message = ChaîneConstruit([
+      						Vous avez invité %1 à participer au projet %2.
+      						Le destinataire de l'email a décliné l'invitation et ne fait donc pas partie des intervenants de ce projet.
+      					],sEmailInvit,Projet.NomProjet)
+      				FIN
+      				Ajoute(cMel.Destinataire,clResp.m_sEmail)
+      				
+      				EnvoiEmail(cMel)
+      			FIN
+      		FIN
+      	FIN
+      	
+      	// Supprime l'invitation
+      	HSupprime(CompteUtilisateur_Projet,nEnr)
+      FIN
+      
+      
+     type : 458752
+   -
+     name : PROJET_AccepteInvitation
+     procedure_id : 1785668722604964988
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //PROJET_AccepteInvitation (<sTokenInvit> est chaîne, <sEmailInvit> est chaîne)
+      //
+      // Paramètres :
+      //	sTokenInvit (chaîne ANSI) : <indiquez ici le rôle de sTokenInvit>
+      //	sEmailInvit (chaîne ANSI) : <indiquez ici le rôle de sEmailInvit>
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE PROJET_AccepteInvitation( LOCAL sTokenInvit est une chaîne, LOCAL sEmailInvit est une chaîne )
+      
+      // Retrouve le token
+      SI HLitRecherchePremier(CompteUtilisateur_Projet,TokenInvit,sTokenInvit) ALORS
+      	// Vérifier l'email associé
+      	clInvité est un CUtilisateur
+      	SI clInvité.bChargeInfo(CompteUtilisateur_Projet.IDCompteUtilisateur) ALORS
+      		SI clInvité.m_sEmail<>sEmailInvit ALORS
+      			// Invitation invalide
+      			RETOUR
+      		FIN
+      	FIN
+      	
+      	// Accepte l'invitation
+      	CompteUtilisateur_Projet.Role = ROLE_PRJ_INTERVENANT
+      	CompteUtilisateur_Projet.TokenInvit = ""
+      	HModifie(CompteUtilisateur_Projet)
+      	
+      	// Déduit le projet
+      	SI HLitRecherchePremier(Projet,IDProjet,CompteUtilisateur_Projet.IDProjet) ALORS
+      		// Déduit le responsable
+      		SI HLitRecherchePremier(CompteUtilisateur_Projet,IDProjetRole,[Projet.IDProjet,ROLE_PRJ_RESPONSABLE]) ALORS
+      			clResp est un CUtilisateur
+      			SI clResp.bChargeInfo(CompteUtilisateur_Projet.IDCompteUtilisateur) ALORS
+      				// Notifie l'invitant
+      				cMel est un Email
+      				AVEC cMel
+      					.Expediteur = LitParamètreSite(PARAM_EMAIL_EXPEDITEUR)
+      					.Sujet = ChaîneConstruit("Validation d'une invitation au projet %1",Projet.NomProjet)
+      					.Message = ChaîneConstruit([
+      						Vous avez invité %1 à participer au projet %2.
+      						Le destinataire de l'email a accepté l'invitation et fait donc partie des intervenants de ce projet.
+      					],sEmailInvit,Projet.NomProjet)
+      				FIN
+      				Ajoute(cMel.Destinataire,clResp.m_sEmail)
+      				
+      				EnvoiEmail(cMel)
+      			FIN
+      		FIN
+      	FIN
+      FIN
+      
+     type : 458752
+   -
+     name : PROJET_ListeIntervenant
+     procedure_id : 1785973716670123670
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] PROJET_ListeIntervenant (<nIDProjet> est entier sur 8 octets)
+      //
+      // Paramètres :
+      //	nIDProjet (entier sur 8 octets) : <indiquez ici le rôle de nIDProjet>
+      // Valeur de retour :
+      // 	tableau : // 	Aucune
+      //
+      PROCÉDURE PROJET_ListeIntervenant( LOCAL nIDProjet est un entier sur 8 )
+      
+      tabInter est un tableau de CUtilisateur
+      
+      POUR TOUT CompteUtilisateur_Projet AVEC IDProjet = nIDProjet
+      	clInter est un CUtilisateur
+      	SI clInter.bChargeInfo(CompteUtilisateur_Projet.IDCompteUtilisateur) ALORS
+      		SI clInter.m_bCompteActif ALORS
+      			Ajoute(tabInter,clInter)
+      		FIN
+      	FIN
+      FIN
+      
+      
+      RENVOYER tabInter
+     type : 458752
+   -
+     name : TICKET_Cree
+     procedure_id : 1785989084071143691
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] TICKET_Cree (<stNouveauTicket> est STTicket)
+      //
+      // Paramètres :
+      //	stNouveauTicket (STTicket) : <indiquez ici le rôle de stNouveauTicket>
+      // Valeur de retour :
+      // 	Type indéterminé : // 	Aucune
+      //
+      PROCÉDURE TICKET_Cree( LOCAL stNouveauTicket est un STTicket )
+      
+      stNouveauTicket.dhDateCréation = DateHeureLocaleVersUTC(DateHeureSys())
+      stNouveauTicket.bOuvert = Vrai
+      stNouveauTicket.nEtat = ETAT_TICKET_ENCOURS
+      stNouveauTicket.nIDCreateur = pclUtilisateurCourant().m_nIDCompteUtilisateur
+      
+      HRAZ(Ticket)
+      MémoireVersFichier(stNouveauTicket,Ticket)
+      HAjoute(Ticket)
+      
+      RENVOYER Ticket.IDTicket
+      
+     type : 458752
+   -
+     name : IDGraviteVersChaine
+     procedure_id : 1786044171359543267
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] IDGraviteVersChaine (<nIDGravite> est entier)
+      //
+      // Paramètres :
+      //	nIDGravite (entier) : <indiquez ici le rôle de nIDGravite>
+      // Valeur de retour :
+      // 	chaîne ANSI : // 	Aucune
+      //
+      PROCÉDURE IDGraviteVersChaine( LOCAL nIDGravite est un entier )
+      
+      SELON nIDGravite
+      	CAS GRAVITE_MINEUR
+      		RENVOYER "Mineur"
+      	CAS GRAVITE_NORMAL
+      		RENVOYER "Normal"
+      	CAS GRAVITE_FATAL
+      		RENVOYER "Fatal"
+      FIN
+      
+      ErreurDéclenche(1,"Niveau de gravité inconnu")
+      RENVOYER ""
+      
+      
+      
+     type : 458752
+   -
+     name : TICKET_AjouteIntervention
+     procedure_id : 1786048384727898153
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] TICKET_AjouteIntervention (<stInter> est STIntervention)
+      //
+      // Paramètres :
+      //	stInter (STIntervention) : <indiquez ici le rôle de stInter>
+      // Valeur de retour :
+      // 	Type indéterminé : // 	Aucune
+      //
+      //	bActualiseTicket (booléen) : <indiquez ici le rôle de bActualiseTicket>
+      PROCÉDURE TICKET_AjouteIntervention( LOCAL stInter est un STIntervention )
+      
+      stInter.dhDateIntervention = DateHeureLocaleVersUTC(DateHeureSys())
+      
+      HRAZ(Intervention)
+      MémoireVersFichier(stInter,Intervention)
+      HAjoute(Intervention)
+      
+      // Ajoute les pièces jointes
+      POUR TOUT stPJ DE stInter.tabPieceJointe
+      	HRAZ(PieceJointe)
+      	MémoireVersFichier(stPJ,PieceJointe)
+      	PieceJointe.IDIntervention = Intervention.IDIntervention
+      	HAjoute(PieceJointe)
+      FIN
+      
+      // Actualise le ticket
+      HLitRecherchePremier(Ticket,IDTicket,stInter.nIDTicket,hBlocageEcriture)
+      Ticket.Gravité = stInter.nGravité
+      Ticket.Ouvert = (stInter.nEtat<>ETAT_TICKET_CLOTURE)
+      Ticket.EtatTicket = stInter.nEtat
+      HModifie(Ticket)
+      
+      RENVOYER Intervention.IDIntervention
+     type : 458752
+   -
+     name : INTERVENTION_AjoutePieceJointe
+     procedure_id : 1786092055984733554
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //INTERVENTION_AjoutePieceJointe (<stPJ> est STPieceJointe)
+      //
+      // Paramètres :
+      //	stPJ (STPieceJointe) : <indiquez ici le rôle de stPJ>
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE INTERVENTION_AjoutePieceJointe( stPJ est un STPieceJointe )
+      
+      HRAZ(PieceJointe)
+      MémoireVersFichier(stPJ,PieceJointe)
+      HAjoute(PieceJointe)
+      
+      
+      
+     type : 458752
+   -
+     name : PROJET_ListeTicket
+     procedure_id : 1786100783365619442
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] PROJET_ListeTicket (<nIDProjet> est entier sur 8 octets, <gtaFiltreParEtat> est tableau associatif, <gtaFiltreParGravite> est tableau associatif, <gtaFiltreParIntervenant> est tableau associatif, <sFiltreParMot> est chaîne)
+      //
+      // Paramètres :
+      //	nIDProjet (entier sur 8 octets) : <indiquez ici le rôle de nIDProjet>
+      //	gtaFiltreParEtat (tableau associatif) : <indiquez ici le rôle de gtaFiltreParEtat>
+      //	gtaFiltreParGravite (tableau associatif) : <indiquez ici le rôle de gtaFiltreParGravite>
+      //	gtaFiltreParIntervenant (tableau associatif) : <indiquez ici le rôle de gtaFiltreParIntervenant>
+      //	sFiltreParMot (chaîne ANSI) : <indiquez ici le rôle de gsFiltreParMot>
+      // Valeur de retour :
+      // 	tableau : // 	Aucune
+      //
+      //	bAvecDetail (booléen) : <indiquez ici le rôle de bAvecDetail>
+      PROCÉDURE PROJET_ListeTicket( LOCAL nIDProjet est un entier sur 8, ...
+      							  LOCAL gtaFiltreParEtat est un tableau associatif de booléens, local gtaFiltreParGravite est un tableau associatif de booléens,
+      							  LOCAL gtaFiltreParIntervenant est un tableau associatif de booléens, local sFiltreParMot est une chaîne )
+      
+      tabTicket est un tableau de STTicket
+      
+      POUR TOUT Ticket AVEC IDProjet = nIDProjet
+      	SI gtaFiltreParEtat..Occurrence>0 _ET_ gtaFiltreParEtat[Ticket.EtatTicket]=Faux ALORS CONTINUER
+      	SI gtaFiltreParGravite..Occurrence>0 _ET_ gtaFiltreParGravite[Ticket.Gravité]=Faux ALORS CONTINUER
+      	SI gtaFiltreParIntervenant..Occurrence>0 _ET_ gtaFiltreParIntervenant[Ticket.IDAffectation]=Faux ALORS CONTINUER
+      	
+      	stT est un STTicket = TICKET_Lit(Ticket.IDTicket,Faux,Vrai)
+      	bAjouteOK est un booléen = Vrai
+      	SI sFiltreParMot<>"" ALORS
+      		bAjouteOK = Faux
+      		POUR TOUTE CHAÎNE sMot DE sFiltreParMot SEPAREE PAR [" ",";",","]
+      			bAjouteOK = (Position(stT.sRésumé,sMot,1,SansCasse)>0)
+      			POUR TOUT stInter DE stT.tabIntervention
+      				bAjouteOK = bAjouteOK _OU_ (Position(stInter.sDétail,sMot,1,SansCasse)>0)
+      				SI bAjouteOK ALORS SORTIR
+      			FIN
+      		FIN
+      	FIN	
+      	
+      	SI bAjouteOK ALORS
+      		Ajoute(tabTicket,stT)
+      	FIN
+      FIN
+      
+      RENVOYER tabTicket
+     type : 458752
+   -
+     name : TICKET_Lit
+     procedure_id : 1786103459130671649
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] TICKET_Lit (<nIDTicket> est entier sur 8 octets, <bRepositionne> est booléen, <bAvecDetail>)
+      //
+      // Paramètres :
+      //	nIDTicket (entier sur 8 octets) : <indiquez ici le rôle de nIDTicket>
+      //	bRepositionne (booléen) : <indiquez ici le rôle de bRepositionne>
+      //	bAvecDetail : <indiquez ici le rôle de bAvecDetail>
+      // Valeur de retour :
+      // 	STTicket : // 	Aucune
+      //
+      PROCÉDURE TICKET_Lit( LOCAL nIDTicket est un entier sur 8, LOCAL bRepositionne est un booléen, LOCAL bAvecDetail ) 
+      
+      SI bRepositionne ALORS
+      	HLitRecherchePremier(Ticket,IDTicket,nIDTicket)
+      FIN
+      
+      stInfoTicket est un STTicket
+      
+      FichierVersMémoire(stInfoTicket,Ticket)
+      
+      SI bAvecDetail ALORS
+      	stInfoTicket.sEtat = IDEtatVersChaine(stInfoTicket.nEtat)
+      
+      	stInfoTicket.sNomAffichageAffectation = UTILISATEUR_NomAffichage(stInfoTicket.nIDAffectation) 
+      
+      	stInfoTicket.sGravite = IDGraviteVersChaine((stInfoTicket.nGravite))
+      
+      	stInfoPrj est un STProjet = PROJET_Lit(stInfoTicket.nIDProjet,Faux)
+      	stInfoTicket.sNomProjet = stInfoPrj.sNomProjet
+      	
+      	HExécuteRequête(REQ_DateDerniereInterTicket,hRequêteDéfaut,nIDTicket)
+      	stInfoTicket.dhDerniereIntervention = REQ_DateDerniereInterTicket.DateIntervention
+      	
+      	// Interventions
+      	HExécuteRequête(REQ_ListeInterventionSurTicket,hRequêteDéfaut,nIDTicket)
+      	POUR TOUT REQ_ListeInterventionSurTicket 
+      		stInter est un STIntervention
+      		FichierVersMémoire(stInter,REQ_ListeInterventionSurTicket)
+      		stInter.sNomAffichageIntervention = UTILISATEUR_NomAffichage(stInter.nIDIntervenant)
+      		stInter.sDescriptionChangeEtat = ChaîneConstruit("Passage à l'état %1",IDEtatVersChaine(stInter.nEtat))
+      		stInter.sDescriptionChangeGravité = ChaîneConstruit("Passage au niveau de gravité %1",IDGraviteVersChaine(stInter.nGravité))
+      		stInter.tabPieceJointe = INTERVENTION_ListePieceJointe(stInter.nIDIntervention)
+      		Ajoute(stInfoTicket.tabIntervention,stInter)
+      	FIN
+      	
+      FIN
+      
+      RENVOYER stInfoTicket
+     type : 458752
+   -
+     name : IDEtatVersChaine
+     procedure_id : 1786104494217834095
+     type_code : 15
+     code : |1+
+      PROCÉDURE IDEtatVersChaine( LOCAL nIDEtat est un entier )
+      
+      SELON nIDEtat
+      	CAS ETAT_TICKET_ENCOURS 	// Le ticket est en cours de traitement
+      		RENVOYER "En cours"
+      	CAS ETAT_TICKET_DEMANDE 	// La personne en charge du ticket a besoin d'information supplémentaire
+      		RENVOYER "Demande d'info"
+      	CAS ETAT_TICKET_RESOLU  	// Le contenu du ticket a été résolu mais pas encore contrôlé
+      		RENVOYER "Résolu"
+      	CAS ETAT_TICKET_FERME   	// Le contenu du ticket a été rejeté mais pas encore contrôlé
+      		RENVOYER "Fermé/Rejeté"
+      	CAS ETAT_TICKET_CLOTURE 	// Le ticket a été résolu ou rejeté et contrôlé
+      		RENVOYER "Clôturé"
+      FIN
+      
+      ErreurDéclenche(1,"Etat inconnu")
+      RENVOYER ""
+     type : 458752
+   -
+     name : INTERVENTION_ListePieceJointe
+     procedure_id : 1786730103441699621
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] INTERVENTION_ListePieceJointe (<nIDInter> est entier sur 8 octets)
+      //
+      // Paramètres :
+      //	nIDInter (entier sur 8 octets) : <indiquez ici le rôle de nIDInter>
+      // Valeur de retour :
+      // 	tableau : // 	Aucune
+      //
+      PROCÉDURE INTERVENTION_ListePieceJointe( LOCAL nIDInter est un entier sur 8 )
+      
+      tabPJ est un tableau de STPieceJointe
+      POUR TOUT PieceJointe AVEC IDIntervention = nIDInter
+      	// Ne pas utiliser PIECEJOINTE_Lit ou FichierVersMemoire pour ne pas transférer le contenu du mémo !
+      	stPJ est un STPieceJointe
+      	stPJ.nIDPieceJointe = PieceJointe.IDPieceJointe
+      	stPJ.sNomFichier = PieceJointe.Description
+      	stPJ.nTailleFichier = ExtraitChaîne(HInfoMémo(PieceJointe,Contenu),3)
+      	Ajoute(tabPJ,stPJ)
+      FIN
+      
+      RENVOYER tabPJ
+     type : 458752
+   -
+     name : PIECEJOINTE_Lit
+     procedure_id : 1786781840537737740
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] PIECEJOINTE_Lit (<nIDPJ> est entier sur 8 octets)
+      //
+      // Paramètres :
+      //	nIDPJ (entier sur 8 octets) : <indiquez ici le rôle de nIDPJ>
+      // Valeur de retour :
+      // 	STPieceJointe : // 	Aucune
+      //
+      PROCÉDURE PIECEJOINTE_Lit( LOCAL nIDPJ est un entier sur 8 )
+      
+      stPJ est un STPieceJointe
+      SI HLitRecherchePremier(PieceJointe,IDPieceJointe,nIDPJ) ALORS
+      	FichierVersMémoire(stPJ,PieceJointe)
+      	stPJ.nTailleFichier = ExtraitChaîne(HInfoMémo(PieceJointe,Contenu),3)
+      FIN
+      
+      RENVOYER stPJ
+      
+     type : 458752
+   -
+     name : TICKET_ChangeAffectation
+     procedure_id : 1786845642364913996
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //TICKET_ChangeAffectation (<nIDTicket> est entier sur 8 octets, <nIDAffectation> est entier sur 8 octets)
+      //
+      // Paramètres :
+      //	nIDTicket (entier sur 8 octets) : <indiquez ici le rôle de nIDTicket>
+      //	nIDAffectation (entier sur 8 octets) : <indiquez ici le rôle de nIDAffectation>
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE TICKET_ChangeAffectation( LOCAL nIDTicket est un entier sur 8, LOCAL nIDAffectation est un entier sur 8)
+      
+      SI HLitRecherchePremier(Ticket,IDTicket,nIDTicket,hBlocageEcriture) ALORS
+      	Ticket.IDAffectation = nIDAffectation
+      	HModifie(Ticket)
+      FIN
+      
+      
+     type : 458752
+   -
+     name : LectureConfigGlobale
+     procedure_id : 1301442285583876747
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] LectureConfigGlobale ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	booléen : <indiquez ici le rôle de la valeur de retour>
+      //
+      // Exemple :
+      // <Indiquez ici un exemple d'utilisation>
+      //
+      procédure LectureConfigGlobale()
+      
+      // Il est obligatoire que le serveur de mail soit renseigné
+      bConfigSiteOK est un booleen = (LitParamètreSite(PARAM_EMAIL_SERVEUR)<>"")
+      bConfigSiteOK	= bConfigSiteOK _ET_ (Val(LitParamètreSite(PARAM_EMAIL_PORT))<>0)
+      // Si la base de données n'est pas en mode Classic, il faut aussi que les paramètres du serveur soit renseignés
+      SI LitParamètreSite(PARAM_BDD_MODE,"1")<>"1" ALORS
+      	bConfigSiteOK	= bConfigSiteOK _ET_ (LitParamètreSite(PARAM_BDD_SERVEUR)<>"")
+      	bConfigSiteOK	= bConfigSiteOK _ET_ (Val(LitParamètreSite(PARAM_BDD_PORT))<>0)
+      	bConfigSiteOK	= bConfigSiteOK _ET_ (LitParamètreSite(PARAM_BDD_UTILISATEUR)<>"")
+      	bConfigSiteOK	= bConfigSiteOK _ET_ (LitParamètreSite(PARAM_BDD_BASE)<>"")
+      FIN
+      
+      renvoyer bConfigSiteOK
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : COL_SansNom1
+resources :
+ string_res :
+  identifier : 0x1148be0c16022cea
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

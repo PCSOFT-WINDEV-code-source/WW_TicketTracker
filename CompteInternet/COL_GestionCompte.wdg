@@ -1,0 +1,509 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : COL_GestionCompte
+ major_version : 28
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x1dc26b9800025058
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  internal_properties : CAAAAAgAAABWwzqFzCnW/OuhhFesHA8ZwLXbuVfZ6yA4qGCc/CHi9J4e/llbpuL+gnfm20VxaO3yl+sC8q3DzpwmxLI2TM6hx5M2PdMuCE6QumN0H/MGxIAa/VB/d4K1mCQRESzELDY3iFjlGOBQ26ZijPqAFfwvk++9kUX1OrOPBhApK1ldHCvHJ74rtx8e
+  type_code : 31
+  p_codes :
+   -
+     code : |1+
+      // La collection de procédures COL_GestionCompte sert de base à la gestion des comptes utilisateurs d'un site WEBDEV
+      // Elle utilise les fichiers suivants de l'analyse :
+      // - CompteUtilisateur : modélise un compte d'utilisateur de l'application
+      // - CompteMembre : fichier de relation entre les groupes et leurs membres
+      // Le projet doit obligatoirement utiliser la gestion des contextes AWP sur le disque (fonction ConfigureContexteAWP(ctxDisque) dans le code d'initialisation du projet)
+      
+      // Constantes du composant interne
+      CONSTANT
+      	// Constantes des noms de droits sur le site
+      	DROIT_ADMINSITE = "ADMINSITE"		// Les utilisateurs qui possèdent ce droit peuvent administrer tout le site
+      	// Déclarer ici d'autres noms de droits si nécessaire
+      
+      
+      	// Constantes des paramètres de page
+      	PAGEPARAM_ACTIVATION = "id"			// Nom du paramètre à passer à la page d'activation
+      	PAGAPARAM_PHOTO = "id"						// Identifiant d'une photo d'utilisateur
+      	
+      	NOM_UTILISATEUR_INCONNU = "Utilisateur inconnu"
+      	
+      	// Paramètres du site
+      	PARAM_BDD_MODE 			= "DB_MODE"
+      	PARAM_BDD_SERVEUR 		= "DB_SERVER"
+      	PARAM_BDD_PORT 			= "DB_PORT"
+      	PARAM_BDD_UTILISATEUR 	= "DB_USER"
+      	PARAM_BDD_MOT_DE_PASSE 	= "DB_PASSWORD"
+      	PARAM_BDD_BASE 			= "DB_NAME"
+      	
+      FIN
+      
+      
+      // Variables globales du composant interne (ces variables sont placées dans le contexte AWP dans la procédure InitialiseGestionCompteInternet)
+      gbInitTerminée est un booléen = Faux					// Vrai si l'init du composant interne a déjà été effectuée
+      gnIDUtilisateurEnCours est un entier sur 8				// Utilisateur connecté (NULL si aucun utilisateur n'est connecté)
+      gpclUtilisateurEnCours est un CUtilisateur dynamique	
+      gtaDroit est un tableau associatif de chaînes			// Tableau des droits définis sur le site
+      gbActivationParEmail est un booléen = Faux				// Vrai si les comptes utilisateurs sont créés inactifs et doivent être activés par e-mail
+      
+      // En mode AWP il faut indiquer les URL, en mode session les noms des pages
+      gsPageRetourConnexionReussie est une chaîne		// URL ou nom de la page de retour après la connexion d'un utilisateur
+      gsPageRetourAbandon est une chaîne				// URL ou nom de la page de retour après l'abandon de connexion
+      gsPageEspacePerso est une chaîne 				// URL ou nom de la page de l'espace personnel
+      gsPageAccueil est une chaîne 					// URL ou nom de la page d'accueil
+      gsPageInscription est une chaîne				// URL ou nom de la page d'inscription au site
+      gsPageRecupMotDePasse est une chaîne 			// URL ou nom de la page de la page de récupération de mot de passe perdu
+      gsPageConnexion est une chaîne					// URL ou nom de la page de connexion
+      gsPageProfil est une chaîne						// URL ou nom de la page d'édition du profil de l'utilisateur connecté
+      gsPageGestionUtilisateurs est une chaîne		// URL ou nom de la page de gestion des utilisateurs
+      
+      gsURLPageActivation est une chaîne 					// URL de la page AWP d'activation d'un compte utilisateur
+      
+      // Paramètres pour les envois de messages
+      gsEmailExpediteurActivation est une chaîne = "activation"
+      gsEmailSupportTechnique est une chaîne = "assistance"
+      
+      // Le nom du site est une chaîne utilisée dans les messages ou les e-mails envoyés depuis le site
+      // Sa valeur par défaut est le nom de déploiement du site mais n'importe quelle valeur peut être utilisée
+      gsNomSite est une chaîne = ProjetInfo(piNomSiteDéployé)
+     type : 720896
+  procedures :
+   -
+     name : Deconnecte
+     internal_properties : CAAAAAgAAAC09omnY/5Qxnf8KejnTcNsFB8SI+4FcSQZOJrE8qkcX977Cb2zT3/8sYo7SUhg5i+UF+FAKuwXKqVF6pyZ/llMSR8jEJQ6JdRdlkzneXhVShfE37NUt4h5q0sQT751dq3wHVP6pDLHQKkbcwtv
+     procedure_id : 2144399371855462981
+     type_code : 15
+     code : |1+
+      // Résumé : Déconnecte l'utilisateur en cours
+      // Syntaxe :
+      // Deconnecte ()
+      //
+      PROCÉDURE Deconnecte()
+      
+      gpclUtilisateurEnCours = Null
+      gnIDUtilisateurEnCours = 0
+     type : 458752
+   -
+     name : bEstConnecte
+     procedure_id : 2144440070968089593
+     type_code : 15
+     code : |1-
+      // Résumé : Indique si l'utilisateur est connecté au site
+      // Syntaxe :
+      // bEstConnecte ()
+      //
+      // Valeur de retour :
+      // 	booleen : Vrai si l'utilisateur s'est connecté au site
+      //
+      PROCÉDURE bEstConnecte()
+      
+      // En mode test, on peut créer un fichier "autoconnect.txt" dans le répertoire _WEB pour connecter automatiquement un utilisateur
+      // Ce fichier doit contenir login+RC+mot de passe et être encodé en UTF-8
+      SI EnModeTest() _ET_ (gpclUtilisateurEnCours=Null) ALORS
+      	sFicAutoConnect est une chaîne = fRepExe()+"\autoconnect.txt"
+      	SI fFichierExiste(sFicAutoConnect) ALORS
+      		sInfoAutoConnect est une chaine = UTF8VersChaîne(fChargebuffer(sFicAutoConnect))
+      		gpclUtilisateurEnCours = CUtilisateur::s_clConnecte(ExtraitChaîne(sInfoAutoConnect,1,RC),ExtraitChaîne(sInfoAutoConnect,2,RC))
+      		SI gpclUtilisateurEnCours<>Null ALORS
+      			gnIDUtilisateurEnCours = gpclUtilisateurEnCours.m_nIDCompteUtilisateur
+      		FIN
+      	FIN
+      FIN
+      
+      RENVOYER (gpclUtilisateurEnCours<>Null)
+     type : 458752
+   -
+     name : bUtilisateurDisponible
+     internal_properties : CAAAAAgAAACvxR9ttharF/I8CZyuX8WsbeW10mo9gFIWF7Uyj/orJY6cuBO4TIvkq3YJV26/cTujwO6meebxZWN6G59+BbWNCa/AEn978QNtn0n2DPXxuft42eBOSQ==
+     procedure_id : 2144769752660565507
+     type_code : 15
+     code : |1-
+      // Résumé : Vérifie qu'un identifiant n'est pas déjà utilisé (comme e-mail ou nom d'affichage)
+      // Syntaxe :
+      //[ <Résultat> = ] bUtilisateurDisponible (<sIdentifiant> est chaîne [, <nBlocage> est entier sur 8 octets])
+      //
+      // Paramètres :
+      //	sIdentifiant (chaîne UNICODE) :Chaîne à vérifier
+      //	nBlocage (entier sur 8 octets - valeur par défaut=8) :indique si la lecture doit bloquer l'enregistrement
+      // Valeur de retour :
+      // 	booléen : Vrai si l'identifiant n'existe ni en tant qu'e-mail, ni en tant que nom d'affichage
+      //
+      PROCÉDURE bUtilisateurDisponible( sIdentifiant est une chaîne, LOCAL nBlocage est un entier sur 8 = hBlocageNon )
+      
+      // Vérification des e-mails
+      SI HLitRecherchePremier(CompteUtilisateur,Email,sIdentifiant,nBlocage) ALORS
+      	RENVOYER Faux
+      FIN
+      
+      // L'identifiant est libre
+      RENVOYER Vrai
+     type : 458752
+   -
+     name : EnvoiEmailActivation
+     procedure_id : 2144780447129788242
+     type_code : 15
+     code : |1+
+      // Résumé : Envoi de l'email d'activation du compte
+      // Syntaxe :
+      //EnvoiEmailActivation (<nIDUtil> est entier sur 8 octets)
+      //
+      // Paramètres :
+      //	nIDUtil (entier sur 8 octets) :identifiant de l'utilisateur
+      
+      PROCÉDURE EnvoiEmailActivation( nIDUtil est un entier sur 8 octets )
+      
+      SI gbActivationParEmail=Faux ALORS 
+      	RETOUR
+      FIN
+      
+      // Se positionne sur l'enregistrement de l'utilisateur
+      HLitRecherchePremier(CompteUtilisateur,IDCompteUtilisateur,nIDUtil)
+      
+      cMel est un Email
+      AVEC cMel
+      	.Sujet = ChaîneConstruit("Activation de votre compte %1",gsNomSite)
+      	.Expéditeur = gsEmailExpediteurActivation
+      	.Message = ChaîneConstruit(<§Rff0000873174ef88¤fr-FR¤Bonjour,CRCRVous avez créé un compte utilisateur sur le site %4.CRPour utiliser ce compte, vous devez au préalable l'activer en cliquant sur le lien suivant : %1?%3=%2CRCRSi vous n'avez pas crée ce compte, il vous suffit d'ignorer ce message.CRSi vous rencontrez des difficultés dans l'activation de votre compte, contactez notre support à l'adresse : %5CRCRCordialement,CRL'équipe %4CR§>,gsURLPageActivation,CompteUtilisateur.TokenActivation,PAGEPARAM_ACTIVATION,gsNomSite,gsEmailSupportTechnique)
+      FIN
+      Ajoute(cMel.Destinataire,CompteUtilisateur.Email)
+      
+      EnvoiEmail(cMel)
+     type : 458752
+   -
+     name : bUtilisateurActif
+     procedure_id : 2148490332588515988
+     type_code : 15
+     code : |1-
+      // Résumé : Cette fonction recherche un utilisateur par son nom ou son e-mail et renvoi l'état d'activité du compte
+      // Syntaxe :
+      //[ <Résultat> = ] bUtilisateurActif (<sIDUtilisateur> est chaîne [, <bBloqueEnreg> est booléen])
+      //
+      // Paramètres :
+      //	sIDUtilisateur (chaîne) : Nom d'utilisateur ou e-mail
+      // 	bBloqueEnreg (booléen - valeur par défaut=0) : Indique si la lecture doit bloquer l'enregistrement
+      // Valeur de retour :
+      // 	booleen : vrai si le compte est actif
+      //
+      PROCÉDURE bUtilisateurActif( sIDUtilisateur est une chaîne , bBloqueEnreg est un booléen = Faux )
+      
+      // Recherche l'utilisateur
+      SI bUtilisateurDisponible(sIDUtilisateur,bBloqueEnreg ? hBlocageEcriture SINON hBlocageNon) ALORS
+      	RENVOYER Faux
+      FIN
+      
+      RENVOYER CompteUtilisateur.CompteActif
+     type : 458752
+   -
+     name : ReinitialiseMotDePasse
+     internal_properties : CAAAAAgAAABwMs3lv/jMts8E4bDPNQvUZP+ic67V6SwZyKo0MnkM32YzkUWLF0+smaJjUUDIvke056Eg+jxbTplBPni92hWYPQu/7MA+6fiRUuATHeTRNjswC78gSxzd37eUO0IR0hkEOV/G0DYn6m9fN0+r
+     procedure_id : 2148491045553122052
+     type_code : 15
+     code : |1+
+      // Résumé : Réinitialise le mot de passe d'un utilisateur, désactive le compte et envoi le mail d'activation
+      // Syntaxe :
+      //ReinitialiseMotDePasse (<sIDUtilisateur> est chaîne)
+      //
+      // Paramètres :
+      //	sIDUtilisateur (chaîne) : Nom ou e-mail de l'utilisateur
+      
+      PROCÉDURE ReinitialiseMotDePasse( sIDUtilisateur est une chaîne )
+      
+      // Vérifie que le compte existe et qu'il est actif
+      SI PAS bUtilisateurActif(sIDUtilisateur,Vrai) ALORS
+      	RETOUR
+      FIN
+      
+      // Génère un nouveau mot de passe
+      sNouveauMDP est une chaîne = GénèreMotDePasse(12)
+      
+      // Réinitialise le compte
+      CompteUtilisateur.MotDePasse = sNouveauMDP
+      HModifie(CompteUtilisateur)
+      
+      // Envoi l'e-mail d'activation
+      EnvoiEmailRappelMotDePasse(CompteUtilisateur.IDCompteUtilisateur,sNouveauMDP)
+      Info(<§Rff0001873176ef88¤fr-FR¤Un nouveau mot de passe a été généré et vous a été envoyé par email.§>)
+     type : 458752
+   -
+     name : DeclareDroit
+     procedure_id : 2148568883398291914
+     type_code : 15
+     code : |1+
+      // Résumé : Déclare un droit du site
+      // Syntaxe :
+      //DeclareDroit (<sNomDroit> est chaîne, <sDescriptionDroit> est chaîne)
+      //
+      // Paramètres :
+      //	sNomDroit (chaîne) : "Nom" du droit, c'est une chaine de 20 caractères maximum servant d'identifiant au droit
+      //	sDescriptionDroit (chaîne) : Description du droit
+      
+      PROCÉDURE DeclareDroit( sNomDroit est une chaîne , sDescriptionDroit est une chaîne )
+      
+      // La déclaration du droit revient à l'ajouter dans le tableau associatif
+      gtaDroit[sNomDroit] = sDescriptionDroit
+      
+      
+     type : 458752
+   -
+     name : bUtilisateurPossedeDroit
+     procedure_id : 2148569420269264206
+     type_code : 15
+     code : |1-
+      // Résumé : Retourne vrai si l'utilisateur connecté possède le droit demandé
+      // Syntaxe :
+      //[ <Résultat> = ] bUtilisateurPossedeDroit (<sNomDroit> est chaîne, <sParamDroit> est chaîne)
+      //
+      // Paramètres :
+      //	sNomDroit (chaîne) : "Nom" du droit, c'est une chaine de 20 caractères maximum servant d'identifiant au droit
+      //	sParamDroit (chaîne) : "Paramètre" du droit, c'est une chaine de 20 caractères maximum servant à préciser, par exemple, sur quoi un droit est appliqué
+      // Valeur de retour :
+      // 	Type indéterminé : // 	booleen
+      //
+      PROCÉDURE bUtilisateurPossedeDroit( LOCAL sNomDroit est une chaîne , LOCAL sParamDroit est une chaîne )
+      
+      // Il faut être connecté pour utiliser cette fonction
+      SI bEstConnecte()=Faux ALORS
+      	RENVOYER Faux
+      FIN
+      
+      RENVOYER pclUtilisateurCourant().bPossèdeDroit(sNomDroit,sParamDroit)
+     type : 458752
+   -
+     name : InitialiseGestionCompteInternet
+     procedure_id : 2155249150760465590
+     type_code : 15
+     code : |1-
+      // Résumé : Initialise le composant interne
+      // Syntaxe :
+      //InitialiseGestionCompteInternet ()
+      //
+      // Valeur de retour :
+      // 	Aucune
+      // L'appelant sait alors que les variables de la collection de procédures ont leur valeurs par défaut et qu'il peut les remplacer
+      //
+      // Retourne Faux lors des initialisations suivantes (après une relecture de contexte AWP)
+      // L'appelant sait alors que les variables ont été relues dans la session AWP
+      //
+      PROCÉDURE InitialiseGestionCompteInternet()
+      
+      // Changement de connexion pour les fichiers de données du composant
+      // Connexion à la base de données
+      SI LitParamètreSite(PARAM_BDD_MODE,"1")="2" ALORS
+      	// Paramètres de la connexion
+      	CxBase est une Connexion
+      	CxBase..Provider = hAccèsHFClientServeur
+      	CxBase..Utilisateur = LitParamètreSite(PARAM_BDD_UTILISATEUR)
+      	CxBase..MotDePasse = decode(LitParamètreSite(PARAM_BDD_MOT_DE_PASSE),encodeBASE64)
+      	CxBase..Serveur = LitParamètreSite(PARAM_BDD_SERVEUR)+":"+LitParamètreSite(PARAM_BDD_PORT)
+      	CxBase..BaseDeDonnées = LitParamètreSite(PARAM_BDD_BASE)
+      	CxBase..Cryptage = hCryptageRC5_16
+      	
+      	HChangeConnexion("*",CxBase)
+      	SI HOuvreConnexion(CxBase)=Faux ALORS
+      		Erreur("Connexion au serveur HFSQL impossible, l'erreur renvoyée est :"+ErreurInfo())
+      	FIN
+      FIN
+      
+      // Déclaration des droits gérés par le site
+      DeclareDroit(DROIT_ADMINSITE,"Administration du site")
+      			
+     type : 458752
+   -
+     name : EnvoiEmailRappelMotDePasse
+     procedure_id : 2159689936515646953
+     type_code : 15
+     code : |1+
+      // Résumé : Envoi un message de rappel de mot de passe
+      // Syntaxe :
+      //EnvoiEmailRappelMotDePasse (<nIDUtil> est entier sur 8 octets, <sNouveauMotDePasse> est chaîne)
+      //
+      // Paramètres :
+      //	nIDUtil (entier sur 8 octets) :Identifiant de l'utilisateur
+      //	sNouveauMotDePasse (chaîne UNICODE) :Nouveau mot de passe
+      
+      PROCÉDURE EnvoiEmailRappelMotDePasse( nIDUtil est un entier sur 8 , sNouveauMotDePasse est une chaîne )
+      
+      // Se positionne sur l'enregistrement de l'utilisateur
+      HLitRecherchePremier(CompteUtilisateur,IDCompteUtilisateur,nIDUtil)
+      
+      cMel est un Email
+      AVEC cMel
+      	.Sujet = ChaîneConstruit("Réinitialisation de votre mot de passe %1",gsNomSite)
+      	.Expéditeur = gsEmailExpediteurActivation
+      	.Message = ChaîneConstruit(<§Rff0002873178ef88¤fr-FR¤Bonjour,CRCRVotre mot de passe sur le site %1 a été réinitialisé.CRVotre nouveau mot de passe est : %2CRCRCordialement,CRL'équipe %1CR§>,gsNomSite,sNouveauMotDePasse)
+      FIN
+      Ajoute(cMel.Destinataire,CompteUtilisateur.Email)
+      
+      EnvoiEmail(cMel)
+     type : 458752
+   -
+     name : pclUtilisateurCourant
+     procedure_id : 1613789362766465620
+     type_code : 15
+     code : |1+
+      // Résumé : Accès à l'utilisateur connecté
+      // Syntaxe :
+      //[ <Résultat> = ] pclUtilisateurCourant ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	CUtilisateur : Utilisateur connecté (NULL si aucun)
+      //
+      PROCÉDURE pclUtilisateurCourant() : CUtilisateur
+      
+      RENVOYER gpclUtilisateurEnCours
+      
+     type : 458752
+   -
+     name : bConnecte
+     procedure_id : 1613790153080346743
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] bConnecte (<sNomUtilisateur> est chaîne, <sMotDePasse> est chaîne)
+      //
+      // Paramètres :
+      //	sNomUtilisateur (chaîne ) : <indiquez ici le rôle de sNomUtilisateur>
+      //	sMotDePasse (chaîne ) : <indiquez ici le rôle de sMotDePasse>
+      // Valeur de retour :
+      // 	booléen : // 	Aucune
+      //
+      PROCÉDURE bConnecte( sNomUtilisateur est une chaîne, sMotDePasse est une chaîne ) : booléen
+      
+      gpclUtilisateurEnCours = CUtilisateur::s_clConnecte(sNomUtilisateur,sMotDePasse)
+      SI gpclUtilisateurEnCours<>Null ALORS
+      	gnIDUtilisateurEnCours = gpclUtilisateurEnCours.m_nIDCompteUtilisateur
+      SINON
+      	gnIDUtilisateurEnCours = 0
+      FIN
+      
+      RENVOYER bEstConnecte()
+     type : 458752
+   -
+     name : bActiveUtilisateur
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1634959101773960927
+     type_code : 15
+     code : |1-
+      // Résumé : Active un compte d'utilisateur
+      // Syntaxe :
+      //[ <Résultat> = ] bActiveUtilisateur (<nIDActivation> est entier sur 8 octets, <sTokenActivation> est chaîne)
+      //
+      // Paramètres :
+      //	nIDActivation (entier sur 8 octets) : ID du compte à activer
+      //	sTokenActivation (chaîne UNICODE) : Token d'activation
+      // Valeur de retour :
+      // 	booléen : Faux en cas de problème
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE bActiveUtilisateur( nIDActivation est un entier sur 8, sTokenActivation est une chaîne )
+      
+      // Recherche du compte utilisateur
+      HLitRecherchePremier(CompteUtilisateur,IDCompteUtilisateur,nIDActivation)
+      SI PAS HTrouve ALORS
+      	RENVOYER Faux
+      FIN
+      
+      // Le compte existe, on vérifie que le lien reçu correspond bien à un e-mail du site
+      SI CompteUtilisateur.TokenActivation=sTokenActivation ALORS
+      	RENVOYER Faux
+      FIN
+      
+      // Activation du compte
+      CompteUtilisateur.CompteActif = Vrai
+      CompteUtilisateur.TokenActivation = ""
+      HModifie(CompteUtilisateur)
+      
+      RENVOYER Vrai
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	RENVOYER Faux
+     type : 458752
+   -
+     name : nEmailVersIDUtilisateur
+     procedure_id : 1635318122330577408
+     type_code : 15
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] nEmailVersIDUtilisateur (<sEmail> est chaîne)
+      //
+      // Paramètres :
+      //	sEmail (chaîne UNICODE) :<indiquez ici le rôle de sEmail>
+      // Valeur de retour :
+      // 	Type indéterminé : // 	Aucune
+      //
+      PROCÉDURE nEmailVersIDUtilisateur( sEmail est une chaîne )
+      
+      SI HLitRecherchePremier(CompteUtilisateur,Email,sEmail) ALORS
+      	RENVOYER CompteUtilisateur.IDCompteUtilisateur
+      SINON
+      	ErreurDéclenche(1,"Utilisateur non trouvé")
+      	RENVOYER 0
+      FIN
+      
+      
+     type : 458752
+   -
+     name : sHashMotDePasse
+     procedure_id : 1635328275650898618
+     type_code : 15
+     code : |1-
+      // Résumé : Crypte un mot de passe et encode le résultat en Base64
+      // Syntaxe :
+      //[ <Résultat> = ] sHashMotDePasse (<sMotDePasse> est chaîne)
+      //
+      // Paramètres :
+      //	sMotDePasse (chaîne UNICODE) :mot de passe
+      // Valeur de retour :
+      // 	variant : // 	chaine
+      //
+      PROCÉDURE sHashMotDePasse( sMotDePasse est une chaîne )
+      
+      RENVOYER encode(HashChaîne(HA_SHA_256,sMotDePasse),encodeBASE64)
+     type : 458752
+   -
+     name : UTILISATEUR_NomAffichage
+     procedure_id : 1786728806359701927
+     type_code : 15
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] UTILISATEUR_NomAffichage (<nIDUser> est entier sur 8 octets)
+      //
+      // Paramètres :
+      //	nIDUser (entier sur 8 octets) : <indiquez ici le rôle de nIDUser>
+      // Valeur de retour :
+      // 	Type indéterminé : // 	Aucune
+      //
+      PROCÉDURE UTILISATEUR_NomAffichage( LOCAL nIDUser est un entier sur 8 )
+      
+      clUtilisateur est un CUtilisateur
+      SI clUtilisateur.bChargeInfo(nIDUser) ALORS
+      	RENVOYER clUtilisateur.p_NomAffichage
+      FIN
+      
+      RENVOYER NOM_UTILISATEUR_INCONNU
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : COL_SansNom1
+resources :
+ string_res :
+  identifier : 0x1dc26b9800015058
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

@@ -1,0 +1,482 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : CUtilisateur
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x160abfd406ee6f0b
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      CUtilisateur est une Classe
+      	m_nIDCompteUtilisateur est un entier sur 8 octets <MAPPING=IDCompteUtilisateur>
+      	m_sEmail est une chaîne <MAPPING=Email>
+      	m_sNomAffichage est une chaîne <MAPPING=NomAffichage>
+      	m_sNomPrenom est une chaîne <MAPPING=NomPrenom>
+      	m_bCompteActif est un booléen <MAPPING=CompteActif>
+      	m_nIDPhoto est un entier sur 8 octets <MAPPING=IDPhoto>
+      	m_sDescription est une chaîne <MAPPING=description>
+      	
+      	m_sNouveauMotDePasse est une chaine
+      	m_nNumEnrBloqué est un entier sur 8
+      FIN
+     type : 131072
+  procedures :
+   -
+     name : Constructeur
+     procedure_id : 1588292735971847947
+     type_code : 27
+     code : |1+
+      PROCÉDURE Constructeur()
+      
+      m_nNumEnrBloqué = -1
+     type : 589824
+   -
+     name : Destructeur
+     procedure_id : 1588292735971913483
+     type_code : 28
+     code : |1+
+      PROCÉDURE Destructeur()
+      
+      SI m_nNumEnrBloqué>0 ALORS
+      	HDébloqueNumEnr(CompteUtilisateur,m_nNumEnrBloqué)
+      FIN
+     type : 655360
+   -
+     name : bChargeInfo
+     internal_properties : CAAAAAgAAACG1X3nFFcgCbUDcqLfyu+YjvPifgis3IA0YsOtuZSywGV2fYHE6cB4jNvIQEtz0CVKA+uWxCz9wOySmKWfDUn4UEP5/qZIHcmJVtDUCUrCsE1jX81t0o4tcTG/w04ZHGkz7SuYzqlvNSTWe/9/1oj8rj7gzi45jCsRJZbvtSPrOCmLgw==
+     procedure_id : 1588300346659207638
+     type_code : 12
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] bChargeInfo ( [<nIDUtilisateur> est entier sur 8 octets [, <nBlocage> est entier]])
+      //
+      // Paramètres :
+      //	nIDUtilisateur (entier sur 8 octets - valeur par défaut=-1) :<indiquez ici le rôle de nIDAuteur>
+      //	nBlocage (entier - valeur par défaut=8) :<indiquez ici le rôle de bBloqueEcriture>
+      // Valeur de retour :
+      // 	booléen : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE bChargeInfo( LOCAL nIDUtilisateur est un entier sur 8 octets = -1, nBlocage est un entier = hBlocageNon )
+      
+      SI nIDUtilisateur=-1 _OU_ HLitRecherchePremier(CompteUtilisateur,IDCompteUtilisateur,nIDUtilisateur,nBlocage) ALORS
+      	FichierVersMémoire(objet,CompteUtilisateur)
+      	RENVOYER Vrai
+      FIN
+      
+      RENVOYER Faux
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	
+     type : 458752
+   -
+     name : bPossèdeDroit
+     internal_properties : CAAAAAgAAACG1X3nFFcgCbUDcqLfyu+YjvPifgis3IA0YsOtuZSywGV2fYHE6cB4jNvIQEtz0CVKA+uWxCz9wOySmKWfDUn4UEP5/qZIHcmJVtDUCUrCsE1jX81t0o4tcTG/w04ZHGkz7SuYzqlvNSTWe/9/1oj8rj7gzi45jCsRJZbvtSPrOCmLgw==
+     procedure_id : 1588300819110635320
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] bPossèdeDroit (<sNomDroit> est chaîne, <sParamDroit> est chaîne)
+      //
+      // Paramètres :
+      //	sNomDroit (chaîne ) :<indiquez ici le rôle de sNomDroit>
+      //	sParamDroit (chaîne ) :<indiquez ici le rôle de sParamDroit>
+      // Valeur de retour :
+      // 	Type indéterminé : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE bPossèdeDroit( LOCAL sNomDroit est une chaîne, LOCAL sParamDroit est une chaîne )
+      
+      // Recherche le droit
+      SI COL_GestionCompte.gtaDroit[sNomDroit]..Vide ALORS
+      	ErreurDéclenche(1,"Le droit demandé n'existe pas")
+      	RENVOYER Faux
+      FIN
+      
+      SI HLitRecherchePremier(CompteDroit,IDDroitCompletUtilisateur,[sNomDroit,sParamDroit,m_nIDCompteUtilisateur])=Faux ALORS
+      	RENVOYER Faux
+      FIN
+      
+      RENVOYER CompteDroit.Valeur
+      
+      CAS ERREUR:
+      ErreurPropage()
+     type : 458752
+   -
+     name : SupprimeUtilisateur
+     internal_properties : CAAAAAgAAACG1X3nFFcgCbUDcqLfyu+YjvPifgis3IA0YsOtuZSywGV2fYHE6cB4jNvIQEtz0CVKA+uWxCz9wOySmKWfDUn4UEP5/qZIHcmJVtDUCUrCsE1jX81t0o4tcTG/w04ZHGkz7SuYzqlvNSTWe/9/1oj8rj7gzi45jCsRJZbvtSPrOCmLgw==
+     procedure_id : 1588301789777206111
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //SupprimeUtilisateur ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE SupprimeUtilisateur()
+      
+      SI CompteUtilisateur.IDCompteUtilisateur<>m_nIDCompteUtilisateur ALORS
+      	SI HRecherchePremier(CompteUtilisateur,IDCompteUtilisateur,m_nIDCompteUtilisateur,hBlocageEcriture)=Faux ALORS
+      		ErreurDéclenche(1,"L'utilisateur n'existe pas")
+      		RETOUR
+      	FIN
+      FIN
+      
+      HSupprime(CompteUtilisateur)
+      
+      CAS ERREUR:
+      ErreurPropage()
+     type : 458752
+   -
+     name : Bloque
+     internal_properties : CAAAAAgAAACG1X3nFFcgCbUDcqLfyu+YjvPifgis3IA0YsOtuZSywGV2fYHE6cB4jNvIQEtz0CVKA+uWxCz9wOySmKWfDUn4UEP5/qZIHcmJVtDUCUrCsE1jX81t0o4tcTG/w04ZHGkz7SuYzqlvNSTWe/9/1oj8rj7gzi45jCsRJZbvtSPrOCmLgw==
+     procedure_id : 1588304658722114611
+     type_code : 12
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //Bloque ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE Bloque()
+      
+      HLitRecherchePremier(CompteUtilisateur,IDCompteUtilisateur,m_nIDCompteUtilisateur,hBlocageEcriture)
+      m_nNumEnrBloqué = HNumEnr(CompteUtilisateur)
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	
+     type : 458752
+   -
+     name : Enregistre
+     internal_properties : CAAAAAgAAACG1X3nFFcgCbUDcqLfyu+YjvPifgis3IA0YsOtuZSywGV2fYHE6cB4jNvIQEtz0CVKA+uWxCz9wOySmKWfDUn4UEP5/qZIHcmJVtDUCUrCsE1jX81t0o4tcTG/w04ZHGkz7SuYzqlvNSTWe/9/1oj8rj7gzi45jCsRJZbvtSPrOCmLgw==
+     procedure_id : 1588305637977769276
+     type_code : 12
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //Enregistre ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE Enregistre()
+      
+      SI m_nIDCompteUtilisateur=0 ALORS
+      	HRAZ(CompteUtilisateur)
+      FIN
+      
+      MémoireVersFichier(objet,CompteUtilisateur)
+      si m_sNouveauMotDePasse<>"" ALORS
+      	CompteUtilisateur.MotDePasse = m_sNouveauMotDePasse
+      FIN
+      
+      SI m_nIDCompteUtilisateur=0 ALORS
+      	HAjoute(CompteUtilisateur)
+      	m_nIDCompteUtilisateur = CompteUtilisateur.IDCompteUtilisateur
+      SINON
+      	HModifie(CompteUtilisateur)
+      FIN
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	
+     type : 458752
+   -
+     name : ChangeDroit
+     internal_properties : CAAAAAgAAACG1X3nFFcgCbUDcqLfyu+YjvPifgis3IA0YsOtuZSywGV2fYHE6cB4jNvIQEtz0CVKA+uWxCz9wOySmKWfDUn4UEP5/qZIHcmJVtDUCUrCsE1jX81t0o4tcTG/w04ZHGkz7SuYzqlvNSTWe/9/1oj8rj7gzi45jCsRJZbvtSPrOCmLgw==
+     procedure_id : 1588306217809041001
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] ChangeDroit (<sNomDroit> est chaîne, <sParamDroit> est chaîne, <nValeurDroit> est entier)
+      //
+      // Paramètres :
+      //	sNomDroit (chaîne ) :<indiquez ici le rôle de sNomDroit>
+      //	sParamDroit (chaîne ) :<indiquez ici le rôle de sParamDroit>
+      //	nValeurDroit (entier) :<indiquez ici le rôle de nValeurDroit>
+      // Valeur de retour :
+      // 	booléen : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE ChangeDroit( LOCAL sNomDroit est une chaîne , LOCAL sParamDroit est une chaîne , LOCAL nValeurDroit est un entier )
+      
+      // Recherche le droit à modifier et le bloque s'il existe
+      SI HLitRecherchePremier(CompteDroit,IDDroitCompletUtilisateur,[sNomDroit,sParamDroit,m_nIDCompteUtilisateur],hBlocageEcriture) ALORS
+      	CompteDroit.Valeur = nValeurDroit
+      	RENVOYER HModifie(CompteDroit)
+      FIN
+      
+      // Le droit n'existe pas encore, on le crée
+      CompteDroit.IDCompteUtilisateur = m_nIDCompteUtilisateur
+      CompteDroit.NomDroit = sNomDroit
+      CompteDroit.ParamDroit = sParamDroit
+      CompteDroit.Valeur = nValeurDroit
+      
+      RENVOYER HAjoute(CompteDroit)
+      
+      CAS ERREUR:
+      ErreurPropage()
+     type : 458752
+   -
+     name : bVerifieMotDePasse
+     internal_properties : CAAAAAgAAACG1X3nFFcgCbUDcqLfyu+YjvPifgis3IA0YsOtuZSywGV2fYHE6cB4jNvIQEtz0CVKA+uWxCz9wOySmKWfDUn4UEP5/qZIHcmJVtDUCUrCsE1jX81t0o4tcTG/w04ZHGkz7SuYzqlvNSTWe/9/1oj8rj7gzi45jCsRJZbvtSPrOCmLgw==
+     procedure_id : 1588535758023284018
+     type_code : 12
+     code : |1-
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] bVerifieMotDePasse (<sMotDePasse> est chaîne)
+      //
+      // Paramètres :
+      //	sMotDePasse (chaîne ) :<indiquez ici le rôle de sMotDePasse>
+      // Valeur de retour :
+      // 	booléen : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE bVerifieMotDePasse( LOCAL sMotDePasse est une chaîne )
+      
+      RENVOYER CompteUtilisateur.MotDePasse=sMotDePasse
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	RENVOYER Faux
+     type : 458752
+   -
+     name : s_clConnecte
+     internal_properties : CAAAAAgAAAD/NhI74td9exEDJMmGcPBt7oQGs8NXrIE078IMXkZo2LqY7oTgxR0fXvC4AP8+f/Vorj2rejgkrtpirz6EUug=
+     procedure_id : 1613783165111092479
+     type_code : 12
+     code : |1+
+      // Résumé : Instancie un CUtilisateur en vérifiant son mot de passe
+      // Syntaxe :
+      //[ <Résultat> = ] s_clConnecte (<sIdentifiant> est chaîne, <sMotDePasse> est chaîne)
+      //
+      // Paramètres :
+      //	sIdentifiant (chaîne ) :Identifiant de l'utilisateur (peut être son Email ou son nom d'affichage)
+      //	sMotDePasse (chaîne ) :Mot de passe
+      // Valeur de retour :
+      // 	CUtilisateur : instance de CUtilisateur si l'utilisateur est connecté, NULL si l'utilisateur est inconnu ou le mot de passe incorrect
+      //  Pour des raisons de sécurité, il est préférable de ne pas différencier les deux conditions d'échec
+      //
+      PROCÉDURE GLOBALE s_clConnecte( sIdentifiant est une chaîne, sMotDePasse est une chaîne ) : CUtilisateur
+      
+      // L'identifiant peut être un e-mail ou un nom d'affichage
+      SI (HLitRecherchePremier(CompteUtilisateur,Email,sIdentifiant) = Faux) _ET_ (HLitRecherchePremier(CompteUtilisateur,NomAffichage,sIdentifiant) = Faux) ALORS
+      	// Utilisateur inconnu
+      	RENVOYER Null
+      FIN
+      
+      // L'utilisateur a été trouvé, il faut vérifier son mot de passe
+      SI CompteUtilisateur.MotDePasse<>sMotDePasse ALORS
+      	// Mot de passe incorrect
+      	RENVOYER Null
+      FIN
+      
+      // Vérifie que le compte a bien été activé
+      SI CompteUtilisateur.CompteActif=Faux ALORS
+      	RENVOYER Null
+      FIN
+      
+      // Charge les infos
+      clUtilisateur est un CUtilisateur
+      SI clUtilisateur.bChargeInfo(CompteUtilisateur.IDCompteUtilisateur) ALORS
+      	RENVOYER clUtilisateur
+      FIN
+      
+      RENVOYER Null
+     type : 458752
+   -
+     name : s_tabListeUtilisateurs
+     internal_properties : CAAAAAgAAACG1X3nFFcgCbUDcqLfyu+YjvPifgis3IA0YsOtuZSywGV2fYHE6cB4jNvIQEtz0CVKA+uWxCz9wOySmKWfDUn4UEP5/qZIHcmJVtDUCUrCsE1jX81t0o4tcTG/w04ZHGkz7SuYzqlvNSTWe/9/1oj8rj7gzi45jCsRJZbvtSPrOCmLgw==
+     procedure_id : 1634967524232872133
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] s_tabListeUtilisateurs ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	tableau : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE GLOBALE s_tabListeUtilisateurs()
+      
+      tabUtil est un tableau de CUtilisateur
+      
+      POUR TOUT CompteUtilisateur 
+      	clUtil est un CUtilisateur
+      	SI clUtil.bChargeInfo() ALORS
+      		Ajoute(tabUtil,clUtil)
+      	FIN
+      FIN
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	SupprimeTout(tabUtil)
+      
+      FIN:
+      RENVOYER tabUtil
+      
+     type : 458752
+   -
+     name : s_pclTrouveUtilisateur
+     procedure_id : 1777466713653111343
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] s_pclTrouveUtilisateur (<nIDUtilisateur> est entier sur 8 octets)
+      //
+      // Paramètres :
+      //	nIDUtilisateur (entier sur 8 octets) :<indiquez ici le rôle de nIDUtilisateur>
+      // Valeur de retour :
+      // 	Type indéterminé : // 	Aucune
+      //
+      PROCÉDURE GLOBALE s_pclTrouveUtilisateur( LOCAL nIDUtilisateur est un entier sur 8)
+      
+      clUtilisateur est un CUtilisateur
+      SI clUtilisateur.bChargeInfo(nIDUtilisateur) ALORS
+      	RENVOYER clUtilisateur
+      FIN
+      
+      RENVOYER Null
+      
+      
+     type : 458752
+   -
+     name : sURLPhoto
+     procedure_id : 1784231824145256341
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //[ <Résultat> = ] sURLPhoto ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	chaîne ANSI : // 	Aucune
+      //
+      PROCÉDURE sURLPhoto()
+      
+      taParam est un tableau associatif de chaînes = [ ["id" , m_nIDPhoto] ]
+      
+      RENVOYER ConstruitURL(PageAdresse(get_user_image),taParam,URL_ENCODE_VAL_PARAM)
+      
+      
+     type : 458752
+   -
+     name : ChangePhoto
+     procedure_id : 1784232163447816933
+     type_code : 12
+     code : |1+
+      // Résumé : <indiquez ici ce que fait la procédure>
+      // Syntaxe :
+      //ChangePhoto (<sFichierPhoto> est chaîne)
+      //
+      // Paramètres :
+      //	sFichierPhoto (chaîne ANSI) : <indiquez ici le rôle de sFichierPhoto>
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE ChangePhoto( sFichierPhoto est une chaîne )
+      
+      
+      <si CibleExécution=SiteWindows>
+      	
+      	SI ExtraitChaîne(InfoBitmap(sFichierPhoto),1)="BAD" ALORS
+      		RETOUR
+      	FIN
+      	
+      <fin>
+      
+      
+      
+      HRAZ(ComptePhoto)
+      HAttacheMémo(ComptePhoto,Photo,sFichierPhoto)
+      HAjoute(ComptePhoto)
+      
+      m_nIDPhoto = ComptePhoto.IDComptePhoto
+      Bloque()
+      CompteUtilisateur.IDPhoto = m_nIDPhoto
+      HModifie(CompteUtilisateur)
+      
+      
+      
+     type : 458752
+  properties :
+   -
+     name : p_NomAffichage
+     identifier : 0x18c90f880086f899
+     type_code : 103
+     p_codes :
+      -
+        code : |1+
+         PROCÉDURE PUBLIQUE p_NomAffichage()
+         
+         SI m_sNomAffichage="" ALORS
+         	RENVOYER m_sEmail
+         FIN
+         
+         RENVOYER m_sNomAffichage+" ("+m_sEmail+")"
+        type : 1966080
+     template_refs : []
+   -
+     name : p_NouveauMotDePasse
+     identifier : 0x120cc7b52b06b83a
+     type_code : 103
+     p_codes :
+      -
+        code : |1-
+         procédure publique p_NouveauMotDePasse(sValeur est une chaîne)
+         
+         m_sNouveauMotDePasse=sValeur
+        type : 2031616
+     template_refs : []
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : Classe1
+resources :
+ string_res :
+  identifier : 0x1148b078181a20c6
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

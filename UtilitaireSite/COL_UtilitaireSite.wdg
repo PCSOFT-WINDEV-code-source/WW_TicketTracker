@@ -1,0 +1,742 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : COL_UtilitaireSite
+ major_version : 28
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x16090ef00446ef2e
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  type_code : 31
+  p_codes :
+   -
+     code : |1+
+      // Collection de procédures utilitaires pour les sites web
+      gtaParametres est un tableau associatif de chaînes						// Paramètres globaux du site
+      gbInitTerminée est un booléen = Faux									// Vrai quand la collection a été initialisée
+      gsBaseURLSite est une chaîne											// URL de base du site (utilisé pour la construction d'URL)
+      gtaQuery		est un tableau associatif (ccSansCasse) de chaînes		// Liste des paramètres reçus en ligne de commande
+      
+      CONSTANT
+      	// Paramètres d'envoi des emails
+      	PARAM_EMAIL_EXPEDITEUR = "PARAM_EMAIL_EXPEDITEUR"
+      	PARAM_EMAIL_SERVEUR = "PARAM_EMAIL_SERVEUR"
+      	PARAM_EMAIL_PORT = "PARAM_EMAIL_PORT"
+      	PARAM_EMAIL_UTILISATEUR = "PARAM_EMAIL_UTILISATEUR"
+      	PARAM_EMAIL_MOT_DE_PASSE = "PARAM_EMAIL_MOT_DE_PASSE"
+      	PARAM_EMAIL_OPTION_SMTP = "PARAM_EMAIL_OPTION_SMTP"
+      
+      	// Nom du fichier de paramètres globaux du site
+      	NOM_FIC_PARAM_SITE = "param_site.ini"
+      	SECTION_PARAM = "PARAM_SITE"
+      	
+      	// Encodage des paramètres d'URL (fonction ConstruitURL)
+      	URL_ENCODE_VAL_PARAM = Vrai
+      	URL_PRESERVE_VAL_PARAM = Faux
+      
+      	// Constante "paramètre non trouvé"
+      	ERR_NO_ITEM = "#NA#"
+      FIN
+     type : 720896
+  procedures :
+   -
+     name : ConstruitURL
+     internal_properties : CAAAAAgAAADaHgwlxC/x3lF+xiP4rot9Y1YmSaRCBNw5QMo9tP594ezKDVtu7v1ouKE+mTfmYkNEcFPQjXXKt/ZST+kNKo59AOEzDin6KnlOIUIXtskZQyjZDrBUYrU=
+     procedure_id : 1587817003877385656
+     type_code : 15
+     code : |1-
+      // Résumé : Construit une URL en ajoutant des paramètres à une URL de base
+      // Syntaxe :
+      //[ <Résultat> = ] ConstruitURL (<sURLPage> est chaîne, <taParametresEnPlus> est tableau associatif (chaîne), <bEncodeParam> est booléen [, <bSupprimeContexte> est booléen]), <bEncodeParam> est booléen, <bSupprimeContexte> est booléen), <bEncodeParam> est booléen), <bEncodeParam> est booléen), <bEncodeParam> est booléen), <bEncodeParam> est booléen)
+      //
+      // Paramètres :
+      //	sURLPage (chaîne ANSI) : URL de base (ne doit pas contenir de paramètres !)
+      //	taParametresEnPlus (tableau associatif (chaîne ANSI)) : Paramètres supplémentaires
+      //	bEncodeParam (booléen) : URL_ENCODE_VAL_PARAM s'il faut encoder la valeur des paramètres (cas d'affectation à ..URL)
+      //	bSupprimeContexte (booléen - valeur par défaut=0) : <indiquez ici le rôle de bSupprimeContexte>
+      // Valeur de retour :
+      // 	chaîne ANSI : <indiquez ici le rôle de la valeur de retour>
+      // Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE ConstruitURL( LOCAL sURLPage est une chaîne, LOCAL taParametresEnPlus est un tableau associatif de chaînes, LOCAL bEncodeParam est un booléen, local bSupprimeContexte est un booleen = faux )
+      
+      sURLFinale est une chaîne
+      
+      // Si l'URL de la page reçu en paramètre est relative, on ajoute l'URL de base du site
+      // pour que IIS ne fasse pas de raccourci de résolution
+      SI (sURLPage[~"http")=Faux ALORS
+      	sURLFinale = gsBaseURLSite
+      FIN
+      
+      // Retire les paramètres de l'URL reçue
+      sListeParamReçue est une chaine = URLExtraitChemin(sURLPage,urlRequête)
+      nPosParam est un entier = Position(sURLPage,"?")
+      SI nPosParam>0 ALORS
+      	sURLFinale += sURLPage[[ À nPosParam-1]]
+      	pour toute chaine sParamètre de sListeParamReçue separee par "&"
+      		sNomParam est une chaine = ExtraitChaîne(sParamètre,1,"=")
+      		sValParam est une chaine = sParamètre[[taille(sNomParam)+2 à]]
+      		si sNomParam="REFID" alors sValParam=tronque(sValParam,14,nombreDeCaractèresAConserver)
+      		si taParametresEnPlus[sNomParam]="" alors
+      			taParametresEnPlus[sNomParam] = sValParam
+      		FIN
+      	FIN
+      SINON
+      	sURLFinale += sURLPage
+      FIN
+      
+      si bSupprimeContexte ALORS
+      	TableauSupprime(taParametresEnPlus,"REFID")
+      FIN
+      
+      // Ajout des paramètres
+      SI taParametresEnPlus..Occurrence>0 ALORS
+      	sURLFinale += "?"
+      	POUR TOUT sVal, sCle de taParametresEnPlus
+      		// Encode le paramètre si demandé
+      		sValEncode est une chaîne = sVal
+      		SI bEncodeParam ALORS
+      			sValEncode = URLEncode(sVal)
+      		FIN
+      		// Encode le paramètre si c'est une URL
+      		SI Position(sVal,["?","/","&","="])>0 ALORS
+      			sValEncode = URLEncode(sValEncode,encodeURLParamètre)
+      		FIN
+      		
+      		sURLFinale += sCle + "=" + sValEncode + "&"
+      	FIN
+      	// Supprime le "&" excédentaire
+      	sURLFinale = Tronque(sURLFinale,1,nombreDeCaractèresASupprimer)
+      FIN
+      
+      // Ajout de l'identifiant de contexte AWP (si applicable)
+      SI IdentifiantContexteAWP()<>"" _et_ pas bSupprimeContexte ALORS
+      	SI taParametresEnPlus..Occurrence>0 ALORS
+      		sURLFinale += "&" + IdentifiantContexteAWP()
+      	SINON
+      		sURLFinale += "?" + IdentifiantContexteAWP()
+      	FIN
+      FIN
+      
+      RENVOYER sURLFinale
+      
+      CAS ERREUR:
+      	ErreurPropage("Erreur de construction d'URL")
+      	RENVOYER ""
+     type : 458752
+   -
+     name : DateHeure_VersChaine
+     internal_properties : CAAAAAgAAADaHgwlxC/x3lF+xiP4rot9Y1YmSaRCBNw5QMo9tP594ezKDVtu7v1ouKE+mTfmYkNEcFPQjXXKt/ZST+kNKo59AOEzDin6KnlOIUIXtskZQyjZDrBUYrU=
+     procedure_id : 1587817008179890499
+     type_code : 15
+     code : |1-
+      // Résumé : Transformation d'un type DateHeure en chaine
+      // Syntaxe :
+      //[ <Résultat> = ] DateHeure_VersChaine (<dhDateHeure> est dateheure [, <sFormat>])
+      //
+      // Paramètres :
+      //	dhDateHeure (dateheure) : date/heure à transformer
+      //	sFormat (valeur par défaut="") : format d'affichage
+      // Valeur de retour :
+      // 	Type indéterminé : <indiquez ici les valeurs possibles ainsi que leur interprétation>
+      //
+      
+      PROCÉDURE DateHeure_VersChaine(LOCAL dhDateHeure est un DateHeure,LOCAL sFormat = "")
+      
+      sAMPM est une chaîne
+      
+      SI sFormat = "" ALORS
+      	RENVOYER DateVersChaîne(dhDateHeure..PartieDate) + [" "] + HeureVersChaîne(dhDateHeure..PartieHeure,"HH:MM")
+      FIN
+      
+      // On remplace dans le format directement
+      sFormat = Remplace(sFormat,"JJJJ",DateVersJourEnLettre(dhDateHeure..PartieDate))
+      sFormat = Remplace(sFormat,"DDDD",DateVersJourEnLettre(dhDateHeure..PartieDate))
+      sFormat = Remplace(sFormat,"JJJ",DateVersJourEnLettre(dhDateHeure..PartieDate)[[ 1 SUR 3]] + ".")
+      sFormat = Remplace(sFormat,"JJ",NumériqueVersChaîne(dhDateHeure..Jour, "02d"))
+      sFormat = Remplace(sFormat,"J",dhDateHeure..Jour)
+      
+      sFormat = Remplace(sFormat,"MMMM",DateVersMoisEnLettre(dhDateHeure..PartieDate))
+      sFormat = Remplace(sFormat,"MMM",DateVersMoisEnLettre(dhDateHeure..PartieDate)[[ 1 SUR 3]] + ".")
+      sFormat = Remplace(sFormat,"MM",NumériqueVersChaîne(dhDateHeure..Jour, "02d"))
+      sFormat = Remplace(sFormat,"M",dhDateHeure..Mois)
+      
+      sFormat = Remplace(sFormat,"AAAA",dhDateHeure..Année)
+      sFormat = Remplace(sFormat,"AA",dhDateHeure..Année[[ 2 À ]])
+      
+      
+      SI Position(sFormat,"AP") > 0 ALORS
+      	// On doit mettre l'heure en AM/PM
+      	sAMPM = dhDateHeure..Heure > 12 ? "PM" SINON "AM"	
+      	SI dhDateHeure..Heure > 12 ALORS
+      		dhDateHeure..Heure -= 12
+      	FIN	
+      FIN
+      
+      sFormat = Remplace(sFormat,"HH",dhDateHeure..Heure)
+      sFormat = Remplace(sFormat,"mm",dhDateHeure..Minute)
+      sFormat = Remplace(sFormat,"ss",dhDateHeure..Seconde)
+      sFormat = Remplace(sFormat,"lll",dhDateHeure..Milliseconde)
+      sFormat = Remplace(sFormat,"ll",dhDateHeure..Milliseconde /10)
+      sFormat = Remplace(sFormat,"AP",sAMPM)
+      
+      RENVOYER sFormat
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	RENVOYER ""
+     type : 458752
+   -
+     name : _ChargeParamètreSite
+     internal_properties : CAAAAAgAAADaHgwlxC/x3lF+xiP4rot9Y1YmSaRCBNw5QMo9tP594ezKDVtu7v1ouKE+mTfmYkNEcFPQjXXKt/ZST+kNKo59AOEzDin6KnlOIUIXtskZQyjZDrBUYrU=
+     procedure_id : 1587817081195072364
+     type_code : 15
+     code : |1-
+      // Résumé : Initialise le tableau des paramètres globaux du site
+      // Syntaxe :
+      //_ChargeParamètreSite ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE PRIVÉE _ChargeParamètreSite()
+      
+      SupprimeTout(gtaParametres)
+      SI fFichierExiste(FichierParamSite()) ALORS
+      	sListeParam est une chaîne = INILit(SECTION_PARAM,"","",FichierParamSite())
+      	POUR TOUTE CHAÎNE sNomParam DE sListeParam SEPAREE PAR RC
+      		gtaParametres[sNomParam] = INILit(SECTION_PARAM,sNomParam,"",FichierParamSite())
+      	FIN
+      FIN
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	
+     type : 458752
+   -
+     name : LitParamètreSite
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1587817081195990196
+     type_code : 15
+     code : |1-
+      // Résumé : Retourne la valeur d'un paramètre du site
+      // Syntaxe :
+      //[ <Résultat> = ] LitParamètreSite (<sNomParamètre> est chaîne [, <sValeurParDefaut> est chaîne])
+      //
+      // Paramètres :
+      //	sNomParamètre (chaîne ANSI) : Nom du paramètre
+      //	sValeurParDefaut (chaîne ANSI - valeur par défaut="") : <indiquez ici le rôle de sValeurParDefaut>
+      // Valeur de retour :
+      // 	chaîne ANSI : Valeur du paramètre
+      //
+      PROCÉDURE LitParamètreSite( local sNomParamètre est une chaîne, local sValeurParDefaut est une chaîne = "" ) <metier>
+      
+      SI gtaParametres[sNomParamètre]..Vide ALORS
+      	gtaParametres[sNomParamètre] = sValeurParDefaut
+      FIN
+      
+      RENVOYER gtaParametres[sNomParamètre]
+      
+      CAS ERREUR:
+      ErreurPropage()
+      RENVOYER ""
+     type : 458752
+   -
+     name : ChangeParamètreSite
+     internal_properties : CAAAAAgAAADaHgwlxC/x3lF+xiP4rot9Y1YmSaRCBNw5QMo9tP594ezKDVtu7v1ouKE+mTfmYkNEcFPQjXXKt/ZST+kNKo59AOEzDin6KnlOIUIXtskZQyjZDrBUYrU=
+     procedure_id : 1587817085491285282
+     type_code : 15
+     code : |1+
+      // Résumé : Change la valeur d'un paramètre global du site
+      // Syntaxe :
+      //ChangeParamètreSite (<sNomParam> est chaîne, <sValeurParam> est chaîne [, <bSauve> est booléen])
+      //
+      // Paramètres :
+      //	sNomParam (chaîne ANSI) : Nom du paramètre
+      //	sValeurParam (chaîne ANSI) : Nouvelle valeur
+      //	bSauve (booléen - valeur par défaut=1) : Vrai pour sauver dans le fichier la nouvelle valeur du paramètre
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE ChangeParamètreSite(LOCAL sNomParam est une chaîne,LOCAL sValeurParam est une chaîne, LOCAL bSauve est un booléen = Vrai)
+      
+      gtaParametres[sNomParam] = sValeurParam
+      
+      SI bSauve ALORS
+      	INIEcrit(SECTION_PARAM,sNomParam,sValeurParam,FichierParamSite())
+      FIN
+      
+      
+      CAS ERREUR:
+      ErreurPropage()
+     type : 458752
+   -
+     name : InitUtilitaire
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1587817270177347060
+     type_code : 15
+     code : |1-
+      // Résumé : Initialise le composant interne
+      // Syntaxe :
+      //InitUtilitaire ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      // L'appelant sait alors que les variables de la collection de procédures ont leur valeurs par défaut et qu'il peut les remplacer
+      //
+      // Retourne Faux lors des initialisations suivantes (après une relecture de contexte AWP)
+      // L'appelant sait alors que les variables ont été relues dans la session AWP
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE InitUtilitaire()
+      
+      // Charge les paramètres du site depuis la base de données
+      _ChargeParamètreSite()
+      
+      // Tente de déterminer automatiquement l'URL de base du site
+      sURLComplete est une chaîne = PageAdresse(afficheerreur,paCOMPLETE)
+      sURLRelative est une chaîne = PageAdresse(afficheerreur,paRELATIVE)
+      gsBaseURLSite = Tronque(sURLComplete,Taille(sURLRelative),nombreDeCaractèresASupprimer)
+      		
+      CAS ERREUR:
+      	ErreurPropage()
+      
+      	
+     type : 458752
+   -
+     name : ConstruitURLSimple
+     internal_properties : CAAAAAgAAADaHgwlxC/x3lF+xiP4rot9Y1YmSaRCBNw5QMo9tP594ezKDVtu7v1ouKE+mTfmYkNEcFPQjXXKt/ZST+kNKo59AOEzDin6KnlOIUIXtskZQyjZDrBUYrU=
+     procedure_id : 1587822170758586249
+     type_code : 15
+     code : |1-
+      // Résumé : Construit une URL en ajoutant des paramètres à une URL de base
+      // Syntaxe :
+      //[ <Résultat> = ] ConstruitURLSimple (<sURLPage> est chaîne)
+      //
+      // Paramètres :
+      //	sURLPage (chaîne ANSI) : URL de base
+      // Valeur de retour :
+      // 	chaîne ANSI : URL
+      // Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE ConstruitURLSimple( LOCAL sURLPage est une chaîne )
+      
+      taParamVide est un tableau associatif de chaines
+      
+      RENVOYER ConstruitURL(sURLPage,taParamVide,Faux)
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	RENVOYER ""
+     type : 458752
+   -
+     name : ToastErreur_Srv
+     procedure_id : 1588303593668477326
+     type_code : 15
+     code : |1+
+      // Résumé : Affiche un toast d'erreur (permet d'avoir le même format dans tout le site)
+      // Syntaxe :
+      //ToastErreur_Srv (<sMessageErreur> est chaîne)
+      //
+      // Paramètres :
+      //	sMessageErreur (chaîne ANSI) : Texte d'erreur
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE ToastErreur_Srv(LOCAL sMessageErreur est une chaîne)
+      
+      ToastAffiche(sMessageErreur,toastCourt,cvHaut,chCentre,RougePastel)
+      
+     type : 458752
+   -
+     name : ToastInfo_Srv
+     procedure_id : 1635326918437247504
+     type_code : 15
+     code : |1+
+      // Résumé : Affiche un toast d'information (permet d'avoir le même format dans tout le site)
+      // Syntaxe :
+      //ToastInfo_Srv (<sMessage> est chaîne)
+      //
+      // Paramètres :
+      //	sMessage (chaîne ANSI) : Texte d'information
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE ToastInfo_Srv(LOCAL sMessage est une chaîne )
+      
+      ToastAffiche(sMessage,toastLong,cvHaut,chCentre,VertPastel)
+      
+     type : 458752
+   -
+     name : EnvoiEmail
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1635335959360911794
+     type_code : 15
+     code : |1-
+      // Résumé : Envoi un email
+      // Syntaxe :
+      //EnvoiEmail (<cMel> est Email)
+      //
+      // Paramètres :
+      //	cMel (Email) : Variable Email contenant le message à envoyer
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE EnvoiEmail( LOCAL cMel est un Email )
+      
+      EmailChangeTimeOut(5)
+      
+      cMelSession est un emailSessionSMTP
+      AVEC cMelSession
+      	.AdresseServeur = LitParamètreSite(PARAM_EMAIL_SERVEUR,"localhost")
+      	.Port = LitParamètreSite(PARAM_EMAIL_PORT,"25")
+      	.Nom = LitParamètreSite(PARAM_EMAIL_UTILISATEUR)
+      	.MotDePasse = decode(LitParamètreSite(PARAM_EMAIL_MOT_DE_PASSE),encodeBASE64)
+      	.Option = LitParamètreSite(PARAM_EMAIL_OPTION_SMTP)
+      FIN
+      
+      EmailOuvreSession(cMelSession)
+      EmailEnvoieMessage(cMelSession,cMel,emailOptionEncodeEntête)
+      EmailFermeSession(cMelSession)
+      
+      CAS ERREUR:
+      	ErreurPropage()
+     type : 458752
+   -
+     name : LitIdentifiantAWPEnCours
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1783059924958485664
+     type_code : 15
+     code : |1-
+      // Résumé : Récupère l'identifiant de la session AWP en cours
+      // Syntaxe :
+      //[ <Résultat> = ] LitIdentifiantAWPEnCours ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	chaîne ANSI : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE LitIdentifiantAWPEnCours()
+      
+      sAWPID		est une chaîne ANSI
+      sCookies est une chaîne
+      nPos est un entier
+      
+      sAWPID = IdentifiantContexteAWP()
+      SI sAWPID = "" ALORS
+      	// Recherche l'ID AWP dans les paramètres
+      	taQuery est un tableau associatif de chaînes = PageParamètreExtrait("AWP")
+      	POUR TOUT sValeur, sClé de taQuery
+      		SI sClé [= "AWP" ALORS
+      			sAWPID = sClé + ["="] + sValeur
+      			SORTIR
+      		FIN
+      	FIN
+      	
+      	// Si l'ID AWP n'a pas été trouvé dans les paramètres
+      	SI sAWPID = "" ALORS
+      		
+      		// Lit les cookies
+      		sCookies = ExtraitChaîne(SysEnvironnement("HTTP_COOKIE"),2,"=")
+      		
+      		// Recherche l'ID AWP dans les cookies
+      		nPos = Position(sCookies, "AWP_CSESSION")
+      		SI nPos > 0 ALORS
+      			
+      			// Extrait l'ID AWP
+      			sAWPID = ExtraitChaîne(sCookies[[nPos+1 À]], 1, ";")
+      		SINON
+      			nPos = Position(sCookies, "AWPID")
+      			SI nPos > 0 ALORS
+      				
+      				// Extrait l'ID AWP
+      				sAWPID = ExtraitChaîne(sCookies[[nPos+1 À]], 1, ";")
+      			FIN
+      		FIN
+      	FIN
+      FIN
+      
+      RENVOYER sAWPID
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	RENVOYER ""
+     type : 458752
+   -
+     name : PageParamètreExtrait
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1783060977225783595
+     type_code : 15
+     code : |1-
+      // Résumé : Extrait dans un tableau associatif la liste des paramètres reçus par une page
+      // Syntaxe :
+      //[ <Résultat> = ] PageParamètreExtrait ( [<sCommencePar> est chaîne])
+      //
+      // Paramètres :
+      //	sCommencePar (chaîne ANSI - valeur par défaut="") : ne garde que les paramètres dont le nom commence par cette valeur (insensible à la casse)
+      // Valeur de retour :
+      // 	tableau associatif : tableau des paramètres de la page
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE PageParamètreExtrait( LOCAL sCommencePar est une chaîne = "" )
+      
+      taParam est un tableau associatif de chaînes
+      nParam est un entier = 1
+      TANTQUE PageParamètre(nParam)<>""
+      	sNomParam est une chaîne = ExtraitChaîne(PageParamètre(nParam),1,"=")
+      	sValParam est une chaîne = ExtraitChaîne(PageParamètre(nParam),2,"=")
+      	SI sCommencePar~="" _OU_ sNomParam[~sCommencePar ALORS
+      		taParam[sNomParam] = sValParam
+      	FIN
+      	nParam++
+      FIN
+      
+      RENVOYER taParam
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	SupprimeTout(taParam)
+      	RENVOYER taParam
+     type : 458752
+   -
+     name : PageParamètreEx
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1787894997318345059
+     type_code : 15
+     code : |1-
+      // Résumé : Lecture d'un paramètre passé en ligne de commande (avec variantes et valeur par défaut)
+      // Syntaxe :
+      //[ <Résultat> = ] PageParamètreEx (<sParamètre> [, <sValeurDéfaut>])
+      //
+      // Paramètres :
+      //	sParamètre : <indiquez ici le rôle de sParamètre>
+      //	sValeurDéfaut (valeur par défaut="#NA#") : <indiquez ici le rôle de sValeurDéfaut>
+      // Valeur de retour :
+      // 	chaîne ANSI : Valeur du paramètre (en minuscules)
+      // Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE PageParamètreEx(sParamètre <utile>, sValeurDéfaut = ERR_NO_ITEM)
+      
+      sValeur 	est une chaîne
+      
+      // Valeur par défaut
+      sValeur = sValeurDéfaut
+      
+      <COMPILE SI TypeConfiguration=Site>
+      	sCléValeur 	est une chaîne
+      	sClé 		est une chaîne
+      	nIndice 	est un entier
+      	
+      	
+      	// Si le cache des paramètres est vide, on le charge
+      	SI gtaQuery..Occurrence = 0 ALORS
+      		
+      		// Lecture des paramètres reçus
+      		BOUCLE
+      			nIndice ++
+      			
+      			// Récupère le paramètre et sa valeur
+      			sCléValeur = SansEspace(PageParamètre(nIndice))
+      			
+      			// Si le paramètre <nIndice> existe
+      			SI sCléValeur <> "" ALORS
+      				// On le stocke
+      				gtaQuery[ExtraitChaîne(sCléValeur, 1, "=")] = sCléValeur[[PositionOccurrence(sCléValeur, "=", 1) + 1 À]]
+      			FIN
+      			
+      		// Tant qu'il y a des paramètres à lire
+      		À FAIRE TANTQUE sCléValeur <> ""
+      		
+      	FIN
+      	
+      	// Lectures des variantes du paramètre
+      	POUR TOUTE CHAÎNE sClé DE sParamètre SEPAREE PAR ","
+      		
+      		// Si la variante a été trouvée
+      		SI gtaQuery[sClé] <> ERR_NO_ITEM ALORS
+      			
+      			// Lecture et renvoi de la valeur
+      			//sValeur = minuscule(gtaQuery[sClé])
+      			sValeur = gtaQuery[sClé]
+      			SORTIR
+      		FIN
+      	FIN
+      <FIN>
+      
+      RENVOYER sValeur
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	RENVOYER ""
+     type : 458752
+   -
+     name : sGénèreChaîneParamètre
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1787896028110604652
+     type_code : 15
+     code : |1-
+      // Résumé : Construit la chaine des paramètres de la page
+      // Syntaxe :
+      //[ <Résultat> = ] sGénèreChaîneParamètre ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	chaîne ANSI : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE sGénèreChaîneParamètre()
+      
+      sChaîneParamètres est une chaîne
+      
+      SI gtaQuery..Occurrence = 0 ALORS
+      	_PageParamètreInitCache()
+      FIN
+      
+      POUR TOUT sValeur, sClé de gtaQuery
+      	sChaîneParamètres += ["&"] + sClé + "="+sValeur
+      FIN
+      
+      RENVOYER sChaîneParamètres
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	RENVOYER ""
+     type : 458752
+   -
+     name : _PageParamètreInitCache
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1787896114010036170
+     type_code : 15
+     code : |1-
+      // Résumé : Construit un cache des paramètres de la page
+      // Syntaxe :
+      //_PageParamètreInitCache ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE _PageParamètreInitCache()
+      
+      nIndice est un entier
+      sCléValeur est une chaîne
+      
+      // Lecture des paramètres reçus
+      BOUCLE
+      	nIndice ++
+      	
+      	// Récupère le paramètre et sa valeur
+      	sCléValeur = SansEspace(PageParamètre(nIndice))
+      	
+      	// Si le paramètre <nIndice> existe
+      	SI sCléValeur <> "" ALORS
+      		// On le stocke
+      		gtaQuery[ExtraitChaîne(sCléValeur, 1, "=")] = sCléValeur[[PositionOccurrence(sCléValeur, "=", 1) + 1 À]]
+      	FIN
+      	
+      // Tant qu'il y a des paramètres à lire
+      À FAIRE TANTQUE sCléValeur <> ""
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	
+     type : 458752
+   -
+     name : PageAdresseEnCours
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1787896766853999439
+     type_code : 15
+     code : |1-
+      // Résumé : Retourne l'adresse complète de la page en cours
+      // Syntaxe :
+      //[ <Résultat> = ] PageAdresseEnCours ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	chaîne ANSI : // 	Aucune
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE PageAdresseEnCours()
+      
+      sAdressePage est une chaîne = PageAdresse()
+      SI Position(sAdressePage,"?")=0 ALORS
+      	sAdressePage += "?"+LitIdentifiantAWPEnCours()
+      SINON
+      FIN
+      sAdressePage += "&"+sGénèreChaîneParamètre()
+      
+      RENVOYER sAdressePage
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	RENVOYER ""
+      	
+     type : 458752
+   -
+     name : FichierParamSite
+     internal_properties : CAAAAAgAAAAO3YsoLGctpaQ8nBFO9Nf4RoeJi8Nl0HuwLR5IUDO0kbx+GJ9DCXcIR52W25nwCF0a+UXUWSPOtp9Jtf+zMtgrY1RTBkswaCZYAkwKrgrD9IB8CfmIOkGygAs9Y5vVK0UOGnOIW+s8/I26m5+GMPeqRW90nlWdmSImbYrdKoXofojwD+g=
+     procedure_id : 1788222862306434152
+     type_code : 15
+     code : |1-
+      // Résumé : Retourne le chemin du fichier des paramètres globaux du site
+      // Syntaxe :
+      //[ <Résultat> = ] FichierParamSite ()
+      //
+      // Paramètres :
+      //	Aucun
+      // Valeur de retour :
+      // 	chaîne ANSI : chemin du fichier
+      //// Traitement automatique des erreurs :   exécuter le bloc de code CAS ERREUR
+      //
+      
+      PROCÉDURE FichierParamSite()
+      
+      sCheminFichierParam est une chaîne = ComplèteRep(fRepDonnées())+NOM_FIC_PARAM_SITE
+      
+      RENVOYER sCheminFichierParam
+      
+      CAS ERREUR:
+      	ErreurPropage()
+      	RENVOYER ""
+      	
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : COL_SansNom1
+resources :
+ string_res :
+  identifier : 0x1fc5252e02366787
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

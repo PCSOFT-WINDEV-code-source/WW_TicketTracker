@@ -1,0 +1,54 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : COL_UtilitaireNav
+ major_version : 28
+ minor_version : 0
+ type : 65539
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x160a673603c444d2
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  type_code : 41
+  p_codes :
+   -
+     type : 983040
+     role : N
+   -
+     type : 983042
+     role : N
+  procedures :
+   -
+     name : ToastErreur_Nav
+     internal_properties : CAAAAAgAAACIK1ETT6DjJGa4gpHYFVZ2c9pPhLg6lvP67Xmy0t2YCnq6CwfBZ874U9Qed8Md3aECQl27mM+TfmI8cg+GjYtYj7WR3+4wlXyyijTaby/qKNqmpoWlIZ/LDJr7e/mD/Q==
+     procedure_id : 1588195373305137219
+     type_code : 15
+     code : |1+
+      // Résumé : Affiche un toast d'erreur (permet d'avoir le même format dans tout le site)
+      // Syntaxe :
+      //ToastErreur_Nav (<sMessageErreur> est chaîne)
+      //
+      // Paramètres :
+      //	sMessageErreur (chaîne ) : Texte de l'erreur
+      // Valeur de retour :
+      // 	Aucune
+      //
+      PROCÉDURE ToastErreur_Nav( sMessageErreur est une chaîne )
+      
+      ToastAffiche(sMessageErreur,toastCourt,cvHaut,chCentre,RougePastel)
+      
+     type : 458752
+     role : N
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : NAV_SansNom1
+resources :
+ string_res :
+  identifier : 0x1148b07818722172
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

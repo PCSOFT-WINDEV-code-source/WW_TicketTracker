@@ -1,0 +1,139 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : get_user_image
+ major_version : 28
+ minor_version : 0
+ type : 65538
+ description : ""
+ subtype : 8192
+page :
+ name : get_user_image
+ identifier : 0x28c18fab097173b5
+ internal_properties : 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
+ properties : {}
+ type : 1
+ languages :
+  - fr-FR
+ code_elements :
+  type_code : 38
+  p_codes :
+   -
+     code : |1+
+      gnIdPhoto est un entier sur 8 = PageParamètre(PAGAPARAM_PHOTO)
+      nLargeur	est un entier	= PageParamètre("larg")
+      nHauteur	est un entier	= PageParamètre("haut")
+      img est une Image
+      
+      SI HLitRecherchePremier(ComptePhoto,IDComptePhoto,gnIdPhoto) ALORS
+      	img.Image = ComptePhoto.Photo
+      sinon
+      	img.Largeur = 128
+      	img.Hauteur = 128
+      	bufAvatar est un buffer = decode([
+      iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+      YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAXQSURBVHhe7Z0vcBtHFMYNCwsLAw0DwxJiKVNUWBhoWFgW
+      z0hnwcDAwsCSzujuDAwDDQMLCwUF2/12n+IqerF10p10u9/3zfyQNfLp7b+3b9++u5AkScpf09ndm+m8
+      eTetmhtwVTUfA/dPMa3uPmw+P5231/E7FssX9pXSWDWp6svJvP4tNPjyat78M63af/ulXqUOEjvSr+oU
+      IxAaYXrbLK5m7d9+ow1L7BBhhnn9/v5HeyTpFMK0nEaj3zCnp15PqvaPyax+a48oDaHxNbxDWIJ+fv/X
+      T/bIUh+KU/28/dM1+CipV3Ag7fGlQ4W1FWs8pljf0OMmOKaf4Zzaz5G6CCNoGG/+1AT/QL7B/no7b19h
+      5PjGzBV1gmcVpvsfUhDGM2AJ1Gt0bvu50v8V1/qqfdg1WlkgXqEdgqOyR/422Mbaz5Y2itsmx1jFMm/e
+      2U+X4mGLZ6SCwe5GS4EprwBPn9x9MBPwKoyEl75xGKjX9LMA7+g3bpuFmYJP2BO7RiECvgDiH2YSLtGP
+      fgPJJWYSHnGv/dsgj8DMwqOYuuUYg5N6RbcMTGbtJ98YpMzu3phpOHSuHL6xMpnVv5tpOOQZgZrgEJtp
+      ylc69nWMQAxmRDNP+Yr5fY4R2MGRuJmobCH86RmAHapkEc8A7FAFhOjO//eAaicQfnDx6V/dIToe1jmA
+      A9NWMF32cIxADFWu4KSqf/GMwAxVB0hp4LjuJWdwA122MLY9qRP4BmGDKhq4kWcIVtQByFEHIIeyA5Rx
+      /bsfOGeAWfvFMwYjnB1AEcFHwmAws/AoFWR0jEEIXRwAUkTwEc708Kq+9IzBSXNjZuGSwsEJXJYxk3Cp
+      vIJQh1CvzBx8YioP812YcgG+lRzBFAPALgBpYTTZwRspTXyHBzMNjzACHEPQgt2RmYZD8gO2oSsoKT9g
+      G7raQem+oLKDEqRbQnjBvkHImDdLMwmHYqHIgIpGGEyVw7T27wKbmHnKF2rmekZghsoBVK3AbZQXyA7j
+      mUDw/j+6xiAE5fPMLDxiLBf/XdjKxW2kZQDUawTEzCRcUuXQAHNOwONtYccwJFDt/z0xnwhSbv++VSof
+      xzkLUHr/njhnAb065qsoZwG9Qm5bXAWk9OawHWEvzBAXoCsR30V407ZntHIgvQbWRbgs6RuvAFhDvl2U
+      8gRLLClLHPLtqhQhLKsTUNYBOEaxExS1M9D6f5DSFbICrpJr/T9c+e8OiK+B9yXsn33jjh+kvtvPkI5R
+      ttXFFPbtR3AM84sWxu0f193/IZWbP6Dt3wDKKlo4b6/tsaW+lNPxsc78B1IOSSSTqv5sjyv1rTxmAUX/
+      BtXYr5bTlXw5tca+I9Dp38CyU0PX+GeHsQz8OTTWUnPK+T+RxhoZxHPZI0pDKe0E/AYYA/aY0lAKo+yl
+      Z/ixoCDQwBp/rSHl/w8q1NbzDT8WdP1rMF3FdxB7Rh8ZoZMqHtCz0tqfz11CyhdDDaVJVV9mWWY+zARa
+      Do5UygvM9xYxYgOoCaAloaMQ88fRqmfUHInBq9tmoRnhCcE4GPFZTvcdwIkmHFr72bzCwQ4KJlmiR4F3
+      A5+jXqF4JmxQ/BKRysTjKLe5Qap36aO8O8HPQQr8vL3OcpmIx7SoBBojdWjkZons2JwduDPzAJ8Bg2aU
+      s0PcmoXpyxpZr4Qdmln7JUVB4wx6jcGGQWfNcTqlfx4exntIcQaiHxEGYegYi+ULa6b+hR6ndXv8YIfR
+      +5IRe5fzz8Q46fViatH1e0qmj8upcPLcLxejB5HHo5zE0Ph5HL2KJzgwOQWBCG3tSqBe4xjdmnV/xYiU
+      +4UiN7BFtGbdTynxwv8ykSc4a7DmfV4a/eVhDuHzsQGN/oLZ5z3FGv0lU69xfmNNvSuNfgLCALfm3lUO
+      1TfE8bgOIRwE7ftpeNhxCFMSh/thUSA7by5LiQb+h0V5YFv4Ne0shX39D4qSsXOCmOHjfkCUDnZ+OPW7
+      9/4oyqfzOYEkSUXp4uI/oriOfK05cKIAAAAASUVORK5CYII=
+      ],encodeBASE64)
+      	img.image  = bufAvatar
+      fin	
+      	
+      SI nLargeur<>0 _OU_ nHauteur<>0 ALORS
+      	SI nLargeur>0 _ET_ nHauteur=0 ALORS
+      		// Largeur spécifiée - hauteur homothétique
+      		nHauteur = nLargeur*img.Hauteur / img.Largeur
+      		dRedimensionne(img,nLargeur,nHauteur,drHomothétique)
+      	SINON
+      		SI nLargeur=0 _ET_ nHauteur>0 ALORS
+      			// Hauteur spécifiée - largeur homothétique
+      			nLargeur = nHauteur*img.Largeur / img.Hauteur
+      			dRedimensionne(img,nLargeur,nHauteur,drHomothétique)
+      		SINON
+      			// Largeur et hauteur spécifiées
+      			dRedimensionne(img,nLargeur,nHauteur,drHomothétiqueCentré)
+      		FIN
+      	FIN
+      FIN
+      
+      ChaîneAffiche(dSauveImagePNG(img,enMémoire),"image/png","user_image.png")
+      
+     type : 851968
+   -
+     type : 852300
+     enabled : false
+   -
+     type : 852017
+     enabled : false
+   -
+     type : 852119
+     enabled : false
+   -
+     type : 852298
+     role : N
+   -
+     type : 851999
+     role : N
+   -
+     type : 852000
+     role : N
+   -
+     type : 852232
+     enabled : false
+   -
+     type : 852167
+     enabled : false
+   -
+     type : 852169
+     role : N
+     enabled : false
+   -
+     type : 852225
+     role : N
+     enabled : false
+   -
+     type : 852227
+     enabled : false
+   -
+     type : 1310979
+     enabled : false
+   -
+     type : 852228
+     role : N
+     enabled : false
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : PAGE_SansNom1
+resources :
+ string_res :
+  identifier : 0x1fc50f7e2683b111
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+webification :
+ internal_properties : CAAAAAgAAACYzxT95H3qP7nIys4LqA==
+custom_note :
+ internal_properties : CAAAAAgAAAC68/W0/adbG0nFCRhrE42B5HRnbDzVHaz86sSQyxlBk7I=
+rad :
+ internal_properties : CAAAAAgAAABoAN7PLpwJW3EiA7WVZdCA5EwrCA1rvutcDHooMWKe

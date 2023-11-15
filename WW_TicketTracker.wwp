@@ -1,0 +1,325 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : WW_TicketTracker
+ major_version : 28
+ minor_version : 0
+ type : 4097
+ description : ""
+ subtype : 0
+project :
+ identifier : 0x0
+ internal_properties : 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
+ configurations :
+  -
+    name : Site
+    internal_properties : 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
+    configuration_id : 10730816809805457351
+    type : 2
+    generation_name : .\WW_TicketTracker.wdl
+    version :
+     version : 1.00Aa
+     internal_generation_version : 1
+    index_page_generation_name : connexion
+    language : 1
+    64bits : true
+ elements :
+  identifier : 0x48b54bb50067dd0b
+  elements :
+   -
+     name : PAGEMOD_Interne
+     identifier : 0x48b55a6800994ab4
+     internal_properties : CAAAAAgAAADKQDLW1ZKaRQY7kJJRddOzXM9rg08xXrLlLkfU5yjsPPAuZtSwCACub9XPKennkwXPVw==
+     physical_name : .\PAGEMOD_Interne.wwt
+     type : 65541
+   -
+     name : connexion
+     identifier : 0x48b556dc009570ce
+     internal_properties : CAAAAAgAAACDROCH3KYw+0GdeJejv5fq+WJK506HNT8fJvBs3bmwaJFMRIo+d9VI3EO0PYPq9g2lpWN7hQrFPD0bMaAIVw7F7fc5Rb8=
+     physical_name : .\connexion.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : inscription
+     identifier : 0x48b553f5009319f9
+     internal_properties : CAAAAAgAAAB38rlc7i736wgYiYVlDClcV42am91Jkkxq3SHvwQmGZ/wB9VPURZjMFJG2NptaOH57CMmwWmPAY6Cfm1e3XVjnBJF4Cw==
+     physical_name : .\inscription.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : PAGEMOD_Externe
+     identifier : 0x48b552f100912121
+     internal_properties : CAAAAAgAAACrp5P3NHE5YmFal/aMWOFTIWB4oJCi2TaFqiMwZdq4YJioeyZUrFXNTvTuykqGcmautg==
+     physical_name : .\PAGEMOD_Externe.wwt
+     type : 65541
+   -
+     name : deconnexion
+     identifier : 0x48b9746300a8ce50
+     internal_properties : CAAAAAgAAAAb7JjPpN6Yk+n1oP/bp5/iwVoyX6ZPHzbnUnYuT1X3prTgIg6ZPiVqZh3W+1V6rkV9/cuDjQK9NCUz2figr7ZtNb9xnVc=
+     physical_name : .\deconnexion.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : reinit_passe
+     identifier : 0x48b9740600a6627c
+     internal_properties : CAAAAAgAAAAd7p7xLlACFWN3KkWVbSGkU+zIYcBpaojuVzhUgetuCO6Oecu+t3/ERPv863MczGcfH+X5G7xzam/NY3YmKTz3v8Fzm1U=
+     physical_name : .\reinit_passe.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : projet_edite
+     identifier : 0x48bd8117004676b7
+     internal_properties : CAAAAAgAAACivek868+pjtTAleLOWj5BIPvTfMVo+qIFtgNdps8+UYdhtGgfql0T26IPAFAdzWYcHOrkLqFeVxgmzM19wqVeBI5ATqA=
+     physical_name : .\projet_edite.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : tableau_de_bord
+     identifier : 0x48bd64340044a222
+     internal_properties : CAAAAAgAAAB3aBxLIFoEL3WhdIOvu5P2xV4uQypjmvrTzpa26+0quvJoK1n6l62CQjn6/7H+2nEJAceHiQ7BODkHLawcIzrxuTv1Ges=
+     physical_name : .\tableau_de_bord.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : projet_utilisateurs
+     identifier : 0x48bedd0a00b5a95e
+     internal_properties : CAAAAAgAAABxArp1otSGqfcr5jEBmf2AbziMvYxF6a30VfqS0MDItg+nycb+i887CjE6VeVosEtj2ykl7+CfFtt5nzKapbhzO0WP//E=
+     physical_name : .\projet_utilisateurs.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : projet_tickets
+     identifier : 0x48bee37300b7b27c
+     internal_properties : CAAAAAgAAADEh6fGpdmDqPYq5zAAmPiDYsWRtv+Stj6b5LKo8joHxp04OFg+K+g+yZClqjoPCyBW1iwi7OOcFdp4njObpLtwNrh6hH4=
+     physical_name : .\projet_tickets.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : PI_ProjetTDB
+     identifier : 0x48beef4400b9da77
+     internal_properties : CAAAAAgAAACimJqOPWpCXX4sf1zzdz38ECFP51nz/oyZZUCToJ91q131piSUdEDfR/3n0VGPa12nrw==
+     physical_name : .\PI_ProjetTDB.wwh
+     type : 65542
+   -
+     name : profil
+     identifier : 0x48bef20b00bdb1ac
+     internal_properties : CAAAAAgAAAA3KFwLYBrEbzXhtMPv+1M2BZ7ug+qjkmaQISDsDlU9VOW5hTaqI9gbktkG4Wk+GjFJwQfHSU4B+PlH7exc4/oxeXu12Ss=
+     physical_name : .\profil.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : invitation
+     identifier : 0x48bef33700bf488a
+     internal_properties : CAAAAAgAAADbrNiP5J5Y06k14D8b518iAZryn2aPp9JO+04mJL5j3oOWnbX5fnlPHgUOgc267gW9vQvDTUL99OVzmTjgb3at9f8xXZc=
+     physical_name : .\invitation.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : ticket_ajoute
+     identifier : 0x48bef4ec00c1f1dc
+     internal_properties : CAAAAAgAAACFRuaJ5pha3Vs/4j0d5VksC7QACWghG81DHnpSsEkyYiVfDM/hVjaLWiGK76HUlK/HR52xU0T78ud1mz7ucXSv9/k7Q70=
+     physical_name : .\ticket_ajoute.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : ticket_visu
+     identifier : 0x48bfe505006bd78c
+     internal_properties : CAAAAAgAAAAd7p7xLlACFWN3KkWVbSGkU+zIYcBprM2dfLzAG0bXAGNf7xpMJVC0ulGWG4kczGcfH+X5G7xzam/NY3YmKTz3v8Fzm1U=
+     physical_name : .\ticket_visu.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : get_attach
+     identifier : 0x48cbeb190078eb3f
+     internal_properties : CAAAAAgAAABpahJdCmwOob9jLll5wYX491A0dcRtxzs83S//Kj3MEZ+2cl/6fRz05m2WGYnYyGMbE9GNdxjXzoPRZ2rSnUD7oy3nF+k=
+     physical_name : .\get_attach.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+   -
+     name : err_config
+     identifier : 0x48d10adc00787640
+     internal_properties : CAAAAAgAAADp6pLdiuyOIT/jrtn5QQV4d9C09UTtev+Xd05jP92o4FTmN+1+18UE/GNYf8mQSOObk1EN95hXTgNR5+pSHcB7I61nl2k=
+     physical_name : .\err_config.wwh
+     type : 65538
+     report :
+      fr-FR : FR
+  other_elements : []
+  net_assemblies : []
+  uwp_api : []
+  external_components : []
+  internal_components :
+   -
+     physical_name : .\UtilitaireSite\UtilitaireSite.wci
+   -
+     physical_name : .\WW_SAVClientMetier\WW_SAVClientMetier.wci
+   -
+     physical_name : .\CompteInternet\CompteInternet.wci
+ data_directory : <RepExeOuRepDonneesCommun>
+ common_generation_directory : true
+ wb_skin : 200 Kowii
+ wb_color_palette : Dolphin
+ languages :
+  - fr-FR
+ site_map :
+  roots : []
+  orphans :
+   -
+     name : connexion
+     parameters : []
+     title :
+      fr-FR : Connexion
+     description :
+      fr-FR : Connexion
+   -
+     name : deconnexion
+     parameters : []
+     title :
+      fr-FR : Déconnexion
+     description :
+      fr-FR : Déconnexion
+   -
+     name : get_attach
+     parameters : []
+     title :
+      fr-FR : Téléchargement d'une pièce jointe
+     description :
+      fr-FR : Téléchargement d'une pièce jointe
+   -
+     name : inscription
+     parameters : []
+     title :
+      fr-FR : Inscription
+     description :
+      fr-FR : Inscription
+   -
+     name : invitation
+     parameters : []
+     title :
+      fr-FR : Invitation
+     description :
+      fr-FR : Invitation
+   -
+     name : profil
+     parameters : []
+     title :
+      fr-FR : Profil utilisateur
+     description :
+      fr-FR : Profil utilisateur
+   -
+     name : projet_edite
+     parameters : []
+     title :
+      fr-FR : Ajout d'un projet
+     description :
+      fr-FR : Ajout d'un projet
+   -
+     name : projet_tickets
+     parameters : []
+     title :
+      fr-FR : Tickets d'un projet
+     description :
+      fr-FR : Tickets d'un projet
+   -
+     name : projet_utilisateurs
+     parameters : []
+     title :
+      fr-FR : Gestion des utilisateurs
+     description :
+      fr-FR : Gestion des utilisateurs
+   -
+     name : reinit_passe
+     parameters : []
+     title :
+      fr-FR : reinit_passe
+     description :
+      fr-FR : reinit_passe
+   -
+     name : tableau_de_bord
+     parameters : []
+     title :
+      fr-FR : Tableau de Bord
+     description :
+      fr-FR : Tableau de Bord
+   -
+     name : ticket_ajoute
+     parameters : []
+     title :
+      fr-FR : Création d'un ticket
+     description :
+      fr-FR : Création d'un ticket
+   -
+     name : ticket_visu
+     parameters : []
+     title :
+      fr-FR : Visualisation d'un ticket
+     description :
+      fr-FR : Visualisation d'un ticket
+ url_rewriting :
+  internal_properties : CAAAAAgAAADkPzcUdUUS7wCiun+MCjqYH70RJdzkSv/nRvXZ3ENdikMa6bcHtsAH
+ code_elements :
+  internal_properties : CAAAAAgAAAD2j+QXZVn5Ks1PflyDYJYaL/0GknIVNCZgt+D6enT+tt0svs7PcMDl8tlzhqCTZF3qD8aQ5A8lZwa4MMx1Mg==
+  type_code : 0
+  p_codes :
+   -
+     code : |1+
+      
+      // Composant interne "Utilitaire"
+      // Doit être initialisé avant tout le reste car c'est lui qui contient les paramètres globaux du site
+      COL_UtilitaireSite.InitUtilitaire()
+      
+      // Vérification de la configuration du site
+      gbConfigSiteOK est un booléen = LectureConfigGlobale()
+      
+      // Composant interne de gestion des comptes
+      COL_GestionCompte.InitialiseGestionCompteInternet()
+      COL_GestionCompte.gsPageRetourConnexionReussie		= "tableau_de_bord"			// nom de la page de retour après la connexion d'un utilisateur
+      COL_GestionCompte.gsPageRetourAbandon				= "connexion"				// nom de la page de retour après l'abandon de connexion
+      COL_GestionCompte.gsPageAccueil						= "connexion"				// nom de la page d'accueil
+      COL_GestionCompte.gsPageInscription					= "inscription"				// nom de la page d'inscription au site
+      COL_GestionCompte.gsPageRecupMotDePasse				= "reinit_passe"			// nom de la page de la page de récupération de mot de passe perdu
+      COL_GestionCompte.gsPageConnexion					= "connexion"				// nom de la page de connexion
+      COL_GestionCompte.gsPageProfil						= "profil"					// nom de la page d'édition du profil de l'utilisateur connecté
+      
+      // Composant interne "code métier"
+      COL_SAVClient.InitialiseSAVClient()
+      COL_SAVClient.gsPageCreationCompteSurInvitation = "invitation"				// nom de la page d'activation d'un compte sur invitation
+      
+      
+     type : 196608
+   -
+     type : 196621
+   -
+     type : 196627
+     enabled : false
+  orphans :
+   -
+     name : Site
+     identifier : 0x48b54bb50068dd0b
+     code_elements :
+      type_code : 159
+      p_codes : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+rad :
+ internal_properties : CAAAAAgAAABhIL0UXeZmxDJxY3Xy0Q==
+project_explorer :
+ explorer_type : project
+resources :
+ string_res :
+  identifier : 0x0
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAAAd98VSJfHHqE3P0QHwrwdhn7ig8dWBR6valpUTgnAMTVXiDg==
